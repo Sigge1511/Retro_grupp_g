@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Retro_grupp_g.Data;
 namespace Retro_grupp_g
 {
     public class Program
@@ -9,6 +10,8 @@ namespace Retro_grupp_g
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            builder.Services.AddDbContext<SakilaContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SakilaConnection")));
 
 
             var app = builder.Build();
