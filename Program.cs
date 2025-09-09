@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 namespace Retro_grupp_g
 {
     public class Program
@@ -8,6 +9,7 @@ namespace Retro_grupp_g
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+
 
             var app = builder.Build();
 
