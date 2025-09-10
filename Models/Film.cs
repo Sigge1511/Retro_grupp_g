@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace Retro_grupp_g.Models;
 
@@ -27,6 +29,9 @@ public partial class Film
 
     public string? Rating { get; set; }
 
+    public string? SpecialFeatures { get; set; }
+
+    [Column("last_update")]
     public DateTime LastUpdate { get; set; }
 
     public virtual ICollection<FilmActor> FilmActors { get; set; } = new List<FilmActor>();

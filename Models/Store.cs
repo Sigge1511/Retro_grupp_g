@@ -5,6 +5,7 @@ namespace Retro_grupp_g.Models;
 
 public partial class Store
 {
+
     public byte StoreId { get; set; }
 
     public byte ManagerStaffId { get; set; }

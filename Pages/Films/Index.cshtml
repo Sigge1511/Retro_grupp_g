@@ -1,0 +1,101 @@
+﻿@page
+@model Retro_grupp_g.Pages.Films.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Översikt</h1>
+
+<h4>Filmer i databasen</h4>
+<br>
+<h5>
+    <a asp-page="Create">Lägg till en ny film här</a>
+</h5>
+<br>
+<br>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Titel:
+            </th>
+            <th>
+                Beskrivning:
+            </th>
+            <th>
+                Premiär år:
+            </th>
+            <th>
+                Antal dagar tillåtet att hyra:
+            </th>
+            <th>
+                Kostnad per dag:
+            </th>
+            <th>
+                Längd, i minuter:
+            </th>
+            <th>
+                Kostnad för att ersätta:
+            </th>
+            <th>
+                Åldersgräns:
+            </th>
+            <th>
+                Extramaterial:
+            </th>
+            <th>
+                Senast uppdaterad:
+            </th>
+            <th>
+                Språk:
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Film) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RentalDuration)
+            </td>
+            <td>
+                $ @Html.DisplayFor(modelItem => item.RentalRate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Length) minuter
+            </td>
+            <td>
+                $ @Html.DisplayFor(modelItem => item.ReplacementCost)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rating)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SpecialFeatures)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastUpdate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Language.Name)
+            </td>            
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.FilmId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.FilmId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.FilmId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,142 @@
+﻿@page "{id:int}"
+@model Retro_grupp_g.Pages.Films.EditModel
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Redigera film</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <input type="hidden" asp-for="Film.FilmId" />
+
+            <div class="mb-3">
+                <label class="form-label">Titel</label>
+                <input asp-for="Film.Title" class="form-control" />
+                <span asp-validation-for="Film.Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Beskrivning</label>
+                <textarea asp-for="Film.Description" class="form-control"></textarea>
+                <span asp-validation-for="Film.Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">År</label>
+                <input asp-for="Film.ReleaseYear" class="form-control" />
+                <span asp-validation-for="Film.ReleaseYear" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Språk</label>
+                <select asp-for="Film.LanguageId" class="form-control" asp-items="ViewBag.LanguageId"></select>
+                <span asp-validation-for="Film.LanguageId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Originalspråk</label>
+                <select asp-for="Film.OriginalLanguageId" class="form-control" asp-items="ViewBag.OriginalLanguageId"></select>
+                <span asp-validation-for="Film.OriginalLanguageId" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hyrkostnad per dag</label>
+                    <input asp-for="Film.RentalRate" class="form-control" />
+                    <span asp-validation-for="Film.RentalRate" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Längd (min)</label>
+                    <input asp-for="Film.Length" class="form-control" />
+                    <span asp-validation-for="Film.Length" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Ersättningskostnad</label>
+                    <input asp-for="Film.ReplacementCost" class="form-control" />
+                    <span asp-validation-for="Film.ReplacementCost" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Rating</label>
+                    <select asp-for="Film.Rating" class="form-control" asp-items="ViewBag.Rating"></select>
+                    <span asp-validation-for="Film.Rating" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Extramaterial</label>
+                <input asp-for="Film.SpecialFeatures" class="form-control" />
+                <span asp-validation-for="Film.SpecialFeatures" class="text-danger"></span>
+            </div>
+
+            <!-- Kategorier: checkboxar, förifyllda -->
+            <div class="mb-3">
+                <label class="form-label">Kategorier</label>
+                <div class="row row-cols-1 row-cols-sm-2 g-2">
+                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Category)
+                    {
+                        var isChecked = Model.SelectedCategoryIds.Contains(int.Parse(item.Value));
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="SelectedCategoryIds"
+                                       value="@item.Value"
+                                       @(isChecked ? "checked" : null) />
+                                <label class="form-check-label">@item.Text</label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Skådisar: checkboxar, förifyllda -->
+            <div class="mb-3">
+                <label class="form-label">Skådespelare</label>
+                <div class="actor-box">
+                    <div class="actor-grid">
+                        @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Actors)
+                        {
+                            var isChecked = Model.SelectedActorIds.Contains(int.Parse(item.Value));
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="SelectedActorIds"
+                                       value="@item.Value"
+                                       @(isChecked ? "checked" : null) />
+                                <label class="form-check-label">@item.Text</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- LastUpdate ska inte vara manuellt redigerbart -->
+            <input type="hidden" asp-for="Film.LastUpdate" />
+
+            <div>
+                <button type="submit" class="btn btn-primary">Spara</button>
+                <a asp-page="./Index" class="btn btn-secondary ms-2">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Låt både "0,99" och "0.99" vara giltigt
+        $.validator.methods.number = function (value, element) {
+          return this.optional(element) || /^-?\d+(?:[\,\.]\d+)?$/.test(value.replace(/\s/g,''));
+        };
+    </script>
+}
+
