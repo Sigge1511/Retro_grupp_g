@@ -13,76 +13,64 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.Title)
+            Titel:
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Film.Title)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.Description)
+            Beskrivning:
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Film.Description)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.ReleaseYear)
+            År filmen hade premiär:
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Film.ReleaseYear)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.RentalDuration)
+            Hur länge filmen får hyras:
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Film.RentalDuration)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.RentalRate)
+            Kostnad per dag:
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Film.RentalRate)
+            $ @Html.DisplayFor(model => model.Film.RentalRate)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.Length)
+            Längd, i minuter:
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Film.Length)
+            @Html.DisplayFor(model => model.Film.Length) minuter
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.ReplacementCost)
+            Kostnad för att ersätta film:
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Film.ReplacementCost)
+            $ @Html.DisplayFor(model => model.Film.ReplacementCost)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.Rating)
+            Åldersgräns/Rating:
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Film.Rating)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.SpecialFeatures)
+            Extramaterial:
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Film.SpecialFeatures)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.LastUpdateTemp)
+            Senast uppdaterad:
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Film.LastUpdateTemp)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.Language)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Film.Language.LanguageId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Film.OriginalLanguage)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Film.OriginalLanguage.LanguageId)
+            @Html.DisplayFor(model => model.Film.LastUpdate)
         </dd>
     </dl>
 </div>

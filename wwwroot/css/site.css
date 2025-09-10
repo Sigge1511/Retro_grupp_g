@@ -20,3 +20,22 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+.actor-box {
+    max-height: 420px; /* gör listan rullbar om den blir lång */
+
+    width: 100%; /* fyller hela tillgängliga ytan */
+    min-width: 600px; /* ser till att 3 kolumner inte blir för smala */
+    overflow-y: auto;
+    border: 1px solid #e5e7eb; /* ljus ram */
+    border-radius: .75rem; /* rundade hörn */
+    padding: .75rem;
+    background: #fff;
+}
+
+.actor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* exakt 3 kolumner */
+    gap: .5rem .75rem; /* mellanrum mellan rutorna */
+}

@@ -335,10 +335,10 @@ public partial class SakilaContext : DbContext
                 .HasColumnType("text")
                 .HasColumnName("description");
             entity.Property(e => e.LanguageId).HasColumnName("language_id");
-            entity.Property(e => e.LastUpdateTemp)
+            entity.Property(e => e.LastUpdate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
-                .HasColumnName("last_update_temp");
+                .HasColumnName("last_update");
             entity.Property(e => e.Length)
                 .HasDefaultValueSql("(NULL)")
                 .HasColumnName("length");
