@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace Retro_grupp_g.Models;
 
 public partial class Film
 {
-    public int FilmId { get; set; }
+    public ushort FilmId { get; set; }
 
     public string Title { get; set; } = null!;
 
     public string? Description { get; set; }
 
-    public string? ReleaseYear { get; set; }
+    public short? ReleaseYear { get; set; }
 
     public byte LanguageId { get; set; }
 
@@ -22,7 +23,7 @@ public partial class Film
 
     public decimal RentalRate { get; set; }
 
-    public short? Length { get; set; }
+    public ushort? Length { get; set; }
 
     public decimal ReplacementCost { get; set; }
 

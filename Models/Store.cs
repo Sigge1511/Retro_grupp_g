@@ -5,11 +5,12 @@ namespace Retro_grupp_g.Models;
 
 public partial class Store
 {
-    public int StoreId { get; set; }
+
+    public byte StoreId { get; set; }
 
     public byte ManagerStaffId { get; set; }
 
-    public int AddressId { get; set; }
+    public ushort AddressId { get; set; }
 
     public DateTime LastUpdate { get; set; }
 

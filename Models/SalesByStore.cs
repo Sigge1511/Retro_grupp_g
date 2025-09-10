@@ -5,11 +5,9 @@ namespace Retro_grupp_g.Models;
 
 public partial class SalesByStore
 {
-    public int StoreId { get; set; }
+    public string? Store { get; set; }
 
-    public string Store { get; set; } = null!;
-
-    public string Manager { get; set; } = null!;
+    public string? Manager { get; set; }
 
     public decimal? TotalSales { get; set; }
 }

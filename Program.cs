@@ -1,8 +1,10 @@
+
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
+
 namespace Retro_grupp_g
 {
     public class Program
@@ -11,7 +13,7 @@ namespace Retro_grupp_g
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // --- Kulturinställningar: sv-SE ---
+            // --- Kulturinstï¿½llningar: sv-SE ---
             var supportedCultures = new[] { new CultureInfo("sv-SE") };
             builder.Services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -19,7 +21,7 @@ namespace Retro_grupp_g
                 options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
 
-                // (Valfritt) Tillåt att kultur kan komma från cookie/Accept-Language-header
+                // (Valfritt) Tillï¿½t att kultur kan komma frï¿½n cookie/Accept-Language-header
                 options.RequestCultureProviders = new List<IRequestCultureProvider>
                 {
                     new CookieRequestCultureProvider(),
@@ -27,7 +29,7 @@ namespace Retro_grupp_g
                 };
             });
 
-            // Razor Pages + lokalisering (för valideringsmeddelanden/DataAnnotations)
+            // Razor Pages + lokalisering (fï¿½r valideringsmeddelanden/DataAnnotations)
             builder.Services
                 .AddRazorPages()
                 .AddViewLocalization()
@@ -36,6 +38,11 @@ namespace Retro_grupp_g
             // DbContext
             builder.Services.AddDbContext<SakilaContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SakilaConnection")));
+
+            //connection to online database
+            builder.Services.AddDbContext<SakilaDbContext>(options =>
+                options.UseMySql(builder.Configuration.GetConnectionString("SakilaDb"),
+                new MySqlServerVersion(new Version(8, 0, 35))));
 
             var app = builder.Build();
 
@@ -46,7 +53,7 @@ namespace Retro_grupp_g
                 app.UseHsts();
             }
 
-            // Aktivera kultur (läggs tidigt i pipelinen)
+            // Aktivera kultur (lï¿½ggs tidigt i pipelinen)
             var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(locOptions.Value);
 

@@ -9,9 +9,9 @@ public partial class Rental
 
     public DateTime RentalDate { get; set; }
 
-    public int InventoryId { get; set; }
+    public uint InventoryId { get; set; }
 
-    public int CustomerId { get; set; }
+    public ushort CustomerId { get; set; }
 
     public DateTime? ReturnDate { get; set; }
 

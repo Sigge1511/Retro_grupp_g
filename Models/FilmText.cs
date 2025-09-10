@@ -5,7 +5,7 @@ namespace Retro_grupp_g.Models;
 
 public partial class FilmText
 {
-    public short FilmId { get; set; }
+    public ushort FilmId { get; set; }
 
     public string Title { get; set; } = null!;
 

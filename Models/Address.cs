@@ -5,7 +5,7 @@ namespace Retro_grupp_g.Models;
 
 public partial class Address
 {
-    public int AddressId { get; set; }
+    public ushort AddressId { get; set; }
 
     public string Address1 { get; set; } = null!;
 
@@ -13,7 +13,7 @@ public partial class Address
 
     public string District { get; set; } = null!;
 
-    public int CityId { get; set; }
+    public ushort CityId { get; set; }
 
     public string? PostalCode { get; set; }
 

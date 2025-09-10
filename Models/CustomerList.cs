@@ -5,9 +5,9 @@ namespace Retro_grupp_g.Models;
 
 public partial class CustomerList
 {
-    public int Id { get; set; }
+    public ushort Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string? Name { get; set; }
 
     public string Address { get; set; } = null!;
 
@@ -21,5 +21,5 @@ public partial class CustomerList
 
     public string Notes { get; set; } = null!;
 
-    public int Sid { get; set; }
+    public byte Sid { get; set; }
 }

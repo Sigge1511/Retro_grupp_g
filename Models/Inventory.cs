@@ -5,11 +5,11 @@ namespace Retro_grupp_g.Models;
 
 public partial class Inventory
 {
-    public int InventoryId { get; set; }
+    public uint InventoryId { get; set; }
 
-    public int FilmId { get; set; }
+    public ushort FilmId { get; set; }
 
-    public int StoreId { get; set; }
+    public byte StoreId { get; set; }
 
     public DateTime LastUpdate { get; set; }
 

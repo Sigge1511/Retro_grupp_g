@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Retro_grupp_g.Models;
 
-public partial class FilmList
+public partial class NicerButSlowerFilmList
 {
     public ushort Fid { get; set; }
 

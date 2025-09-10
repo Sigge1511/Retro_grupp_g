@@ -5,9 +5,9 @@ namespace Retro_grupp_g.Models;
 
 public partial class Payment
 {
-    public int PaymentId { get; set; }
+    public ushort PaymentId { get; set; }
 
-    public int CustomerId { get; set; }
+    public ushort CustomerId { get; set; }
 
     public byte StaffId { get; set; }
 
@@ -17,7 +17,7 @@ public partial class Payment
 
     public DateTime PaymentDate { get; set; }
 
-    public DateTime LastUpdate { get; set; }
+    public DateTime? LastUpdate { get; set; }
 
     public virtual Customer Customer { get; set; } = null!;
 

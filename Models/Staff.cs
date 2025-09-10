@@ -11,15 +11,15 @@ public partial class Staff
 
     public string LastName { get; set; } = null!;
 
-    public int AddressId { get; set; }
+    public ushort AddressId { get; set; }
 
     public byte[]? Picture { get; set; }
 
     public string? Email { get; set; }
 
-    public int StoreId { get; set; }
+    public byte StoreId { get; set; }
 
-    public bool Active { get; set; }
+    public bool? Active { get; set; }
 
     public string Username { get; set; } = null!;
 
