@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
+using Retro_grupp_g.Repositories;
 
 namespace Retro_grupp_g
 {
@@ -43,6 +44,10 @@ namespace Retro_grupp_g
             builder.Services.AddDbContext<SakilaDbContext>(options =>
                 options.UseMySql(builder.Configuration.GetConnectionString("SakilaDb"),
                 new MySqlServerVersion(new Version(8, 0, 35))));
+
+            builder.Services.AddScoped<IFilmRepository, FilmRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 
             var app = builder.Build();
 
