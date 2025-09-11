@@ -36,9 +36,9 @@ namespace Retro_grupp_g
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization();
 
-            // DbContext
-            builder.Services.AddDbContext<SakilaContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SakilaConnection")));
+            //// DbContext
+            //builder.Services.AddDbContext<SakilaDbContext>(options =>
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("SakilaConnection")));
 
             //connection to online database
             builder.Services.AddDbContext<SakilaDbContext>(options =>
