@@ -20,6 +20,7 @@ namespace Retro_grupp_g
 
             builder.Services.AddScoped<IFilmRepository, FilmRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 
             var app = builder.Build();
 
