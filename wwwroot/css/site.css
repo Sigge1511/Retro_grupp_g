@@ -31,21 +31,47 @@
 
 /****************************************************BODY****************************************************/
 
-body {
-    background-color: #faf8f1;
-    margin-bottom: 60px;
-    font-size: 1.5rem;
-}
+
+/****************************************************NAVBAR****************************************************/
 
 .navbar {
     background-color: #2a5a79;
-    color: floralwhite;
     border-bottom: 50px;
     border-color: antiquewhite;
-    
 }
 .navbar-container {
-    color: floralwhite;
+    display: flex;
+}
+.mynav-link {
+    font-family: 'Visby Regular';
+    font-weight: 700;
+    color: #fff1c2;
+    font-size: 1.3rem;
+    margin-left: 40px;
+    text-decoration: none; /* tar bort understrykning */
+}
+.mynav-link:hover {
+    color: #ffd994;
+}
+/****************************************************LÄNKAR****************************************************/
+
+.small-link {
+    color: #831f00;
+    text-decoration: none; 
+    font-weight: bold;
+}
+.small-link:hover {
+    color: #5a1c01;
+    
+}
+.normal-link {
+    color: #831f00;
+    text-decoration: none; /* tar bort understrykning */
+}
+
+.normal-link:hover {
+    color: #5a1c01;
+    text-decoration: none; /* tar bort understrykning */
 }
 /****************************************************RUBRIKER****************************************************/
 h1 {
@@ -54,7 +80,9 @@ h1 {
     font-weight: bolder;
     text-align: center;
     font-size: 5rem;
-    font-weight: 3000;
+    font-weight: 5000;
+    margin: .5rem 0 1rem;
+    line-height: 1.2;
 }
 
 h2 {
@@ -77,8 +105,11 @@ p {
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 kolumner */
-    gap: 2rem;
+    gap: 1rem;
     margin-top: 2rem;
+    width: 80%;
+    align-content: center;
+    margin: 0 auto; /* CENTRERA griden på sidan */
 }
 
 .dashboard-box {
@@ -96,7 +127,7 @@ p {
     text-decoration: none;
     color: #831f00;
     transition: all 0.2s ease-in-out;
-    min-height: 10rem;
+    height: 13rem;
 }
 
 .dashboard-box:hover {
@@ -105,24 +136,42 @@ p {
     transform: translateY(-3px);
     color: #831f00;  
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* mjuk, diskret skugga */
-}        
-
-
+}
 
 /****************************************************KNAPPAR****************************************************/
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/*.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}*/
+.btn-primary {
+    background-color: #2a5a79;
+    font-family: 'Visby Regular';
+    font-weight: 500;
+    font-size: 2rem;
 }
-
-html {
-  position: relative;
-  min-height: 100%;
+.btn-primary:hover {
+    background-color: #1b4056;
 }
-
-
-
-/****************************************************RUBRIKER****************************************************/
+.btn-secondary {
+    background-color: #831f00;
+    font-size: 2rem;
+}
+.btn-secondary:hover {
+    background-color: #5a1c01;
+}
+/****************************************************FORMULÄR &co****************************************************/
+.form-control {
+    font-size: 1.2rem; /* öka textstorleken */
+    padding: 0.6rem 0.6rem; /* lite mer luft */
+}
+.form-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #831f00;
+}
+.mb-3 {
+    font-size: 1.2rem;
+}
 
 .actor-box {
     max-height: 420px; /* gör listan rullbar om den blir lång */
@@ -140,4 +189,149 @@ html {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr; /* exakt 3 kolumner */
     gap: .5rem .75rem; /* mellanrum mellan rutorna */
+}
+
+
+.page {
+    background-color: #faf8f1;
+    margin-bottom: 60px;
+    font-size: 1.5rem;
+/*    margin-left: 50px !important;
+*/    padding: 30px !important;
+}
+head {
+    margin-left: 0px !important;
+}
+/****************************************************TABELLER****************************************************/
+.col-sm-2 {
+    color: #831f00;
+}
+
+
+.content {
+    max-width: 100%;
+    margin: 0;
+    padding: 1px 2px;
+}
+
+.table-content {
+    max-width: 1400px; /* välj 1200–1600 efter smak */
+    margin: 0 auto;
+    margin-left: 50px;
+}
+
+.table th, .table td {
+    vertical-align: top;
+    text-align: left;
+}
+
+.table tr:nth-child(even) {
+    background: #fafafa;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* <- nyckeln: tvinga allt att få plats */
+    font-size: 0.95rem;
+    margin-left: 0 !important; /* ingen extra förskjutning */
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+    .table th {
+        white-space: normal; /* <-- viktigast */
+        word-break: keep-all; /* bryt helst bara mellan ord */
+        overflow-wrap: anywhere; /* men tillåt brytning om ett ord är för långt */
+        background-color: white;
+        color: #831f00;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        font-weight: 600;
+        border-bottom: 2px solid #e5e5e5;
+    }
+
+    .table td {
+        color: black;
+        white-space: normal; /* <-- viktigast */
+        word-break: keep-all; /* bryt helst bara mellan ord */
+        border: dotted;
+        border-width: 1px;
+        border-color: gray;
+    }
+/* Kolumnbredder (justera efter behov, summera grovt ~100%) */
+.c-actions {
+    width: 7%;
+}
+    /* eller 6–8 %, testa */
+    .c-actions td {
+        white-space: nowrap;
+        text-align: right;
+        
+    }
+
+.c-title {
+    width: 10%;
+}
+
+.c-desc {
+    width: 20%;
+}
+
+.c-year {
+    width: 6%;
+}
+
+.c-days {
+    width: 7%;
+}
+
+.c-rate {
+    width: 8%;
+}
+
+.c-len {
+    width: 9%;
+}
+
+.c-repl {
+    width: 9%;
+}
+
+.c-rating {
+    width: 11%;
+}
+
+.c-extra {
+    width: 12%;
+}
+
+.c-upd {
+    width: 10%;
+}
+
+.c-lang {
+    width: 8%;
+}
+
+.c-actions {
+    width: 6%;
+}
+/* Edit/Details/Delete */
+
+/* Bryt långa texter där det behövs */
+.c-desc td, .c-extra td {
+    word-break: break-word;
+    white-space: normal; /* låt text radas om */
+}
+
+/* Siffror högerställs = lättare att jämföra */
+.c-rate td, .c-repl td, .c-len td, .c-days td {
+    text-align: right;
+}
+
+/* Diskreta rader */
+.film-table td {
+    border-bottom: 1px solid #eee;
 }

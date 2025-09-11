@@ -5,32 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Retro_grupp_g</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Retro_grupp_g.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />  <!-- FLYTTAD NED HIT -->
+
 </head>
 <body>
     <header class="navbar">
         <nav class="navbar-container">
             <a asp-page="/Index" class="navbar-logo" style="margin-right: 3rem">Retro Grupp G</a>            
-                <a asp-page="/Index">Kassa</a>
-                <a asp-page="/Films/Index">Filmer</a>
-                <a asp-page="/Actors/Index">Skådespelare</a>
-                <a asp-page="/Categories/Index">Kategorier</a>
-                <a asp-page="/Testing/testdesign">Designtest</a>
+            <a asp-page="/Index" class="mynav-link">Startsida</a>
+            <a asp-page="/Films/Index" class="mynav-link">Filmer</a>
+            <a asp-page="/Actors/Index" class="mynav-link">Skådespelare</a>
+            <a asp-page="/Categories/Index" class="mynav-link">Kategorier</a>
+            <a asp-page="/Testing/testdesign" class="mynav-link">Designtest</a>
 
         </nav>
     </header>
-    <div class="container">
+    <div class="page">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Retro_grupp_g - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
