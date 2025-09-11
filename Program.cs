@@ -19,6 +19,7 @@ namespace Retro_grupp_g
                 new MySqlServerVersion(new Version(8, 0, 35))));
 
             builder.Services.AddScoped<IFilmRepository, FilmRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             var app = builder.Build();
 
