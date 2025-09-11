@@ -103,7 +103,7 @@
                     <div class="actor-grid">
                         @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Actors)
                         {
-                            var isChecked = Model.SelectedActorIds.Contains(int.Parse(item.Value));
+                            var isChecked = Model.SelectedActorIds.Contains(ushort.Parse(item.Value));
                             <div class="form-check">
                                 <input class="form-check-input"
                                        type="checkbox"

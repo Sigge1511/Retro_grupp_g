@@ -13,15 +13,15 @@ namespace Retro_grupp_g.Pages.Films
 {
     public class EditModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaContext _context;
+        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
 
-        public EditModel(Retro_grupp_g.Data.SakilaContext context)
+        public EditModel(Retro_grupp_g.Data.SakilaDbContext context)
         {
             _context = context;
         }
 
         [BindProperty] public List<int> SelectedCategoryIds { get; set; } = new();
-        [BindProperty] public List<int> SelectedActorIds { get; set; } = new();
+        [BindProperty] public List<ushort> SelectedActorIds { get; set; } = new();
 
         [BindProperty] public Film Film { get; set; } = default!;
 

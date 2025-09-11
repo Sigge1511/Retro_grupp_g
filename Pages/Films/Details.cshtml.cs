@@ -12,9 +12,9 @@ namespace Retro_grupp_g.Pages.Films
 {
     public class DetailsModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaContext _context;
+        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
 
-        public DetailsModel(Retro_grupp_g.Data.SakilaContext context)
+        public DetailsModel(Retro_grupp_g.Data.SakilaDbContext context)
         {
             _context = context;
         }

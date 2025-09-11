@@ -12,9 +12,9 @@ namespace Retro_grupp_g.Pages.Films
 {
     public class DeleteModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaContext _context;
+        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
 
-        public DeleteModel(Retro_grupp_g.Data.SakilaContext context)
+        public DeleteModel(Retro_grupp_g.Data.SakilaDbContext context)
         {
             _context = context;
         }
