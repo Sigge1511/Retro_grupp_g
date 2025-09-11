@@ -1,12 +1,115 @@
-html {
-  font-size: 14px;
+/* Basfont (normal vikt) */
+@font-face {
+    font-family: "Visby Regular";
+    src: url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.eot");
+    src: url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.eot?#iefix")format("embedded-opentype"), 
+        url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.woff2")format("woff2"), 
+        url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.woff")format("woff"), 
+        url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.ttf")format("truetype"), 
+        url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.svg#Visby Regular")format("svg");
+/*    font-family: 'Visby';
+    src: url('/Fontspring-DEMO-visbycf-regular.otf') format('opentype');*/
+    font-weight: 600; /* normal */
+    font-style: normal;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* Bold font (så att h1 kan bli äkta bold) */
+@font-face {
+    font-family: "Visby Regular";
+    src: url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.eot");
+    src: url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.eot?#iefix")format("embedded-opentype"), 
+        url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.woff2")format("woff2"), 
+        url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.woff")format("woff"), 
+        url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.ttf")format("truetype"), 
+        url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.svg#Visby Regular")format("svg");
+/*    font-family: 'Visby';
+    src: url('/Fontspring-DEMO-visbycf-bold.otf') format('opentype');*/
+    font-weight: 3000; /* bold */
+    font-style: normal;
 }
+
+
+/****************************************************BODY****************************************************/
+
+body {
+    background-color: #faf8f1;
+    margin-bottom: 60px;
+    font-size: 1.5rem;
+}
+
+.navbar {
+    background-color: #2a5a79;
+    color: floralwhite;
+    border-bottom: 50px;
+    border-color: antiquewhite;
+    
+}
+.navbar-container {
+    color: floralwhite;
+}
+/****************************************************RUBRIKER****************************************************/
+h1 {
+    color: #DC3C22;
+    font-family: Visby, sans-serif;
+    font-weight: bolder;
+    text-align: center;
+    font-size: 5rem;
+    font-weight: 3000;
+}
+
+h2 {
+    color: #DC3C22;
+    font-family: Visby, sans-serif;
+    font-weight: bolder;
+    font-size: 3rem;
+}
+
+h3 {
+    font-family: Visby, sans-serif;
+    font-weight: bold;
+}
+p {
+    font-family: Visby, sans-serif;
+    font-weight: normal;
+}
+/****************************************************BOXAR****************************************************/
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolumner */
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.dashboard-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff; /* byt till din färg */
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    font-size: 3.5rem;
+    font-family: 'Visby', sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+    color: #831f00;
+    transition: all 0.2s ease-in-out;
+    min-height: 10rem;
+}
+
+.dashboard-box:hover {
+    background-color: #fcf5db;
+    border-color: #e5e7eb;
+    transform: translateY(-3px);
+    color: #831f00;  
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* mjuk, diskret skugga */
+}        
+
+
+
+/****************************************************KNAPPAR****************************************************/
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
@@ -17,10 +120,9 @@ html {
   min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
-}
 
+
+/****************************************************RUBRIKER****************************************************/
 
 .actor-box {
     max-height: 420px; /* gör listan rullbar om den blir lång */

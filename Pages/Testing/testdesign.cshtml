@@ -1,0 +1,39 @@
+﻿@page
+@model Retro_grupp_g.Pages.Testing.testdesignModel
+
+
+@{
+    <h1>Testdesign h1</h1>
+    <br>
+    <p>Här kan du läsa om hur vi har designat våra tester för att säkerställa att vår applikation fungerar som förväntat.</p>
+    <br>
+    <br>
+    <h2>Teststrategi h2</h2>
+    <p>Vi har valt att använda en kombination av enhetstester, integrationstester och systemtester för att täcka olika aspekter av vår applikation. Enhetstester fokuserar på individuella komponenter, medan integrationstester säkerställer att olika delar av systemet fungerar tillsammans. Systemtester validerar hela applikationens funktionalitet från användarens perspektiv.</p>
+    <br>
+    <h3>Enhetstester h3</h3>
+    <p>Enhetstesterna är skrivna med hjälp av xUnit-ramverket och täcker alla kritiska funktioner i applikationen. Vi har använt mock-objekt för att isolera komponenter och säkerställa att testerna är oberoende av externa faktorer.</p>
+    <br>
+    <h4>Exempel på enhetstest h4</h4>
+    <p>Teeeeeeeeeeeeeeeeeeeeeeest G g G g</p>
+    <br>
+    <h5>Integrationstester h5</h5>
+    <p>Integrationstesterna verifierar att olika moduler i applikationen fungerar korrekt tillsammans. Vi har använt en testdatabas för att simulera verkliga scenarier och säkerställa att dataflödet mellan komponenter är korrekt.</p>
+    <br>
+    <h6>Systemtester h6</h6>
+    <p>Systemtester utförs manuellt av vårt QA-team för att säkerställa att applikationen uppfyller alla krav och fungerar som förväntat i en produktionsliknande miljö. Vi har skapat detaljerade testfall baserade på användarberättelser och kravspecifikationer.</p>
+    <h1>Kassa/Startsida</h1>
+    <br>
+   
+    <div class="dashboard-grid">
+        <a asp-page="/Films/Rent" class="dashboard-box">Hyr film</a>
+        <a asp-page="/Films/Return" class="dashboard-box">Lämna tillbaka film</a>
+        <a asp-page="/Films/Create" class="dashboard-box">Lägg till ny film</a>
+        <a asp-page="/Actors/Index" class="dashboard-box">Hantera skådespelare</a>
+        <a asp-page="/Categories/Index" class="dashboard-box">Kategorier</a>
+        <a asp-page="/Customers/Index" class="dashboard-box">Kunder</a>
+        <a asp-page="/Reports/Index" class="dashboard-box">Rapporter</a>
+        <a asp-page="/Settings/Index" class="dashboard-box">Inställningar</a>
+        <a asp-page="/Help" class="dashboard-box">Hjälp</a>
+    </div>
+}
