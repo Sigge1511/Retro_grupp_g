@@ -30,19 +30,18 @@
                 <input asp-for="Film.ReleaseYear" class="form-control" />
                 <span asp-validation-for="Film.ReleaseYear" class="text-danger"></span>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Språk</label>
-                <select asp-for="Film.LanguageId" class="form-control" asp-items="ViewBag.LanguageId"></select>
-                <span asp-validation-for="Film.LanguageId" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Språk</label>
+                    <select asp-for="Film.LanguageId" class="form-control" asp-items="ViewBag.LanguageId"></select>
+                    <span asp-validation-for="Film.LanguageId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Originalspråk</label>
+                    <select asp-for="Film.OriginalLanguageId" class="form-control" asp-items="ViewBag.OriginalLanguageId"></select>
+                    <span asp-validation-for="Film.OriginalLanguageId" class="text-danger"></span>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Originalspråk</label>
-                <select asp-for="Film.OriginalLanguageId" class="form-control" asp-items="ViewBag.OriginalLanguageId"></select>
-                <span asp-validation-for="Film.OriginalLanguageId" class="text-danger"></span>
-            </div>
-
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Hyrkostnad per dag</label>
