@@ -339,6 +339,7 @@ public partial class SakilaContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("last_update");
+                
             entity.Property(e => e.Length)
                 .HasDefaultValueSql("(NULL)")
                 .HasColumnName("length");
@@ -658,7 +659,7 @@ public partial class SakilaContext : DbContext
                 .HasMaxLength(101)
                 .IsUnicode(false)
                 .HasColumnName("store");
-            entity.Property(e => e.StoreId).HasColumnName("store_id");
+     
             entity.Property(e => e.TotalSales)
                 .HasColumnType("decimal(38, 2)")
                 .HasColumnName("total_sales");

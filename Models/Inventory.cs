@@ -7,7 +7,7 @@ public partial class Inventory
 {
     public uint InventoryId { get; set; }
 
-    public ushort FilmId { get; set; }
+    public int FilmId { get; set; }
 
     public byte StoreId { get; set; }
 

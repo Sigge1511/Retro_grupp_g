@@ -5,7 +5,7 @@ namespace Retro_grupp_g.Models;
 
 public partial class CustomerList
 {
-    public ushort Id { get; set; }
+    public int Id { get; set; }
 
     public string? Name { get; set; }
 

@@ -100,9 +100,10 @@ namespace Retro_grupp_g.Pages.Films
             {
                 foreach (var catId in SelectedCategoryIds)
                 {
+                    int filmId = Film.FilmId;
                     _context.FilmCategories.Add(new FilmCategory
                     {
-                        FilmId = Film.FilmId,
+                        FilmId = filmId,
                         CategoryId = (byte)catId // om CategoryId är byte; annars ta bort cast
                     });
                 }

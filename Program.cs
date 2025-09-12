@@ -1,9 +1,12 @@
 
+using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Retro_grupp_g.Data;
+
 
 namespace Retro_grupp_g
 {
@@ -43,6 +46,8 @@ namespace Retro_grupp_g
             builder.Services.AddDbContext<SakilaDbContext>(options =>
                 options.UseMySql(builder.Configuration.GetConnectionString("SakilaDb"),
                 new MySqlServerVersion(new Version(8, 0, 35))));
+
+
 
             var app = builder.Build();
 

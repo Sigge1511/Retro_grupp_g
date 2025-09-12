@@ -7,13 +7,13 @@ namespace Retro_grupp_g.Models;
 
 public partial class Film
 {
-    public ushort FilmId { get; set; }
+    public int FilmId { get; set; }
 
     public string Title { get; set; } = null!;
 
     public string? Description { get; set; }
 
-    public short? ReleaseYear { get; set; }
+    public int ReleaseYear { get; set; }
 
     public byte LanguageId { get; set; }
 
@@ -23,12 +23,13 @@ public partial class Film
 
     public decimal RentalRate { get; set; }
 
-    public ushort? Length { get; set; }
+    public int Length { get; set; }
 
     public decimal ReplacementCost { get; set; }
 
     public string? Rating { get; set; }
 
+    [Column("special_features")]
     public string? SpecialFeatures { get; set; }
 
     [Column("last_update")]

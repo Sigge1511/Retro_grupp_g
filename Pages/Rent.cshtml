@@ -1,0 +1,102 @@
+﻿@page
+
+@model Retro_grupp_g.Pages.RentModel
+@{
+	ViewData["Title"] = "Hyra film";
+
+}
+<h1>Hyra Film</h1>
+
+<form method="get">
+	<div>
+		<label for="SearchTitle">Filmtitel</label>
+		<input type="text" name="SearchTitle" value="@Model.SearchTitle"/>
+	</div>
+
+    <div>
+        <label for="SearchActor">Skådespelare:</label>
+        <input type="text" name="SearchActor" value="@Model.SearchActor" />
+    </div>
+    <div>
+        <label for="SearchDirector">Regissör:</label>
+        <input type="text" name="SearchDirector" value="@Model.SearchDirector" />
+    </div>
+    <div>
+        <label for="SearchGenre">Genre:</label>
+        <input type="text" name="SearchGenre" value="@Model.SearchGenre" />
+    </div>
+    <button type="submit">Sök</button>
+</form>
+
+<hr />
+
+@if (Model.Filmer.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Titel</th>
+                <th>Beskrivning</th>
+                <th>Genre</th>
+                <th>Skådespelare</th>
+                <th>Tillgänglig</th>
+                <th>Hyr ut</th>
+                <th>Återlämna</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            @foreach (var film in Model.Filmer)
+            {
+            <td>@film.Title</td>
+            <td>@film.Description</td>
+            <td>@string.Join(", ", film.Genres)</td>
+            <td>@film.ActorSummary</td>
+            <td>
+                @(Model.IsAvailable(film.FilmId) ? "Ja" : "Nej")
+            </td>
+            <td>
+                    @if (Model.IsAvailable(film.FilmId))
+                    {
+                        <form method="post" asp-page-handler="Rent">
+                                <input type="hidden" name="FilmId" value="@film.FilmId" />
+                                <select name="SelectedCustomerId" required>
+                                    <option value="">Välj kund</option>
+                                    @foreach (var customer in Model.Customers)
+                                    {
+                                        <option value="@customer.CustomerId">@customer.Name</option>
+                                    }
+                                </select>
+                                <select name="SelectedStaffId" required>
+                                    <option value="">Välj personal</option>
+                                    @foreach (var staff in Model.StaffMembers)
+                                    {
+                                        <option value="@staff.StaffId">@staff.Name</option>
+                                    }
+                                </select>
+                                <button type="submit">Hyra</button>
+                                </form>
+                    }
+
+                </td>
+
+            <td>
+                @if (!Model.IsAvailable(film.FilmId))
+                {
+                    <form method="post" asp-page-handler="Return">
+                        <input type="hidden" name="FilmId" value="@film.FilmId" />
+                        <button type="submit">Återlämna</button>
+                    </form>
+                }
+            </td>
+            }
+        </tbody>
+
+
+    </table>
+}
+else
+{
+    <p>Inga filmer matchar din sökning.</p>
+}
+

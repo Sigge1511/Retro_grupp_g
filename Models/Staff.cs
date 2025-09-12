@@ -11,7 +11,7 @@ public partial class Staff
 
     public string LastName { get; set; } = null!;
 
-    public ushort AddressId { get; set; }
+    public int AddressId { get; set; }
 
     public byte[]? Picture { get; set; }
 
