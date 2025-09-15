@@ -5,9 +5,9 @@ namespace Retro_grupp_g.Models;
 
 public partial class FilmActor
 {
-    public ushort ActorId { get; set; }
+    public int ActorId { get; set; }
 
-    public ushort FilmId { get; set; }
+    public int FilmId { get; set; }
 
     public DateTime LastUpdate { get; set; }
 

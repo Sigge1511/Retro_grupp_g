@@ -5,11 +5,11 @@ namespace Retro_grupp_g.Models;
 
 public partial class City
 {
-    public ushort CityId { get; set; }
+    public int CityId { get; set; }
 
     public string City1 { get; set; } = null!;
 
-    public ushort CountryId { get; set; }
+    public int CountryId { get; set; }
 
     public DateTime LastUpdate { get; set; }
 

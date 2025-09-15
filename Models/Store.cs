@@ -10,7 +10,7 @@ public partial class Store
 
     public byte ManagerStaffId { get; set; }
 
-    public ushort AddressId { get; set; }
+    public int AddressId { get; set; }
 
     public DateTime LastUpdate { get; set; }
 
