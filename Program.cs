@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Retro_grupp_g.Data;
+using Retro_grupp_g.Repositories;
 
 
 namespace Retro_grupp_g
@@ -44,7 +45,9 @@ namespace Retro_grupp_g
                 options.UseMySql(builder.Configuration.GetConnectionString("SakilaDb"),
                 new MySqlServerVersion(new Version(8, 0, 35))));
 
-
+            builder.Services.AddScoped<IFilmRepository, FilmRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 
             var app = builder.Build();
 

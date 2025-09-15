@@ -21,7 +21,7 @@ namespace Retro_grupp_g.Pages.Films
         }
 
         [BindProperty] public List<int> SelectedCategoryIds { get; set; } = new();
-        [BindProperty] public List<int> SelectedActorIds { get; set; } = new();
+        [BindProperty] public List<ushort> SelectedActorIds { get; set; } = new();
 
         [BindProperty] public Film Film { get; set; } = default!;
 

@@ -88,7 +88,7 @@ namespace Retro_grupp_g.Pages.Films
                     _context.FilmActors.Add(new FilmActor
                     {
                         FilmId = Film.FilmId,
-                        ActorId = actorId
+                        ActorId = (ushort)actorId
                     });
                 }
                 await _context.SaveChangesAsync();
