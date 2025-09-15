@@ -16,7 +16,8 @@ namespace Retro_grupp_g
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // --- Kulturinst�llningar: sv-SE ---
+            // --- Kulturinställningar: sv-SE. För att kunna hantera decimaltecken
+            // i tex priser med både 1,5 och 1.5. Hjälpte till för att undvika errors---
             var supportedCultures = new[] { new CultureInfo("sv-SE") };
             builder.Services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -37,10 +38,6 @@ namespace Retro_grupp_g
                 .AddRazorPages()
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization();
-
-            // DbContext
-            builder.Services.AddDbContext<SakilaContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SakilaConnection")));
 
             //connection to online database
             builder.Services.AddDbContext<SakilaDbContext>(options =>

@@ -6,11 +6,11 @@ using Retro_grupp_g.Models;
 using Retro_grupp_g.ViewModels;
 namespace Retro_grupp_g.Pages
 {
-    public class RentModel : PageModel
+    public class CreateRentalModel : PageModel
     {
-        private readonly SakilaContext _context;
+        private readonly SakilaDbContext _context;
 
-        public RentModel(SakilaContext context)
+        public CreateRentalModel(SakilaDbContext context)
         {
             _context = context;
         }
@@ -39,7 +39,7 @@ namespace Retro_grupp_g.Pages
         [BindProperty]
         public int FilmId { get; set; }
         [BindProperty]
-        public int  SelectedCustomerId { get; set; }
+        public int SelectedCustomerId { get; set; }
         [BindProperty]
         public int SelectedStaffId { get; set; }
 
@@ -93,9 +93,9 @@ namespace Retro_grupp_g.Pages
                 FilmId = f.FilmId,
                 Title = f.Title,
                 Description = f.Description,
-                Genres = (ICollection<Category>)f.FilmCategories.Select(fc => fc.Category.Name).ToList(),
-                ReleaseYear = (int?) f.ReleaseYear,
-                Length = (int?) f.Length,
+                Genres = f.FilmCategories.Select(fc => fc.Category.Name).ToList(),
+                ReleaseYear = (int?)f.ReleaseYear,
+                Length = (int?)f.Length,
                 Rating = f.Rating,
                 Language = f.Language?.Name ?? "",
                 ActorSummary = string.Join(", ", f.FilmActors.Select(a => a.Actor.FirstName + " " + a.Actor.LastName))
@@ -124,7 +124,7 @@ namespace Retro_grupp_g.Pages
             var inventoryItem = await _context.Inventories
                 .FirstOrDefaultAsync(i => i.FilmId == FilmId);
 
-            if(inventoryItem == null)
+            if (inventoryItem == null)
             {
                 ModelState.AddModelError(string.Empty, "Filmen finns inte i lager");
                 return RedirectToPage();

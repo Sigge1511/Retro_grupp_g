@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Rent\**" />
+    <Content Remove="Pages\Rent\**" />
+    <EmbeddedResource Remove="Pages\Rent\**" />
+    <None Remove="Pages\Rent\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
 
 
@@ -17,10 +24,6 @@
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
 
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Rent\" />
   </ItemGroup>
 
 </Project>

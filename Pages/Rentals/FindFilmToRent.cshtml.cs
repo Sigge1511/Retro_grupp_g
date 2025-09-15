@@ -2,14 +2,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
+using Retro_grupp_g.Models;
 using Retro_grupp_g.ViewModels;
 
 namespace Retro_grupp_g.Pages.Rentals
 {
     public class IndexModel : PageModel
     {
-        private readonly SakilaContext _context;
-        public IndexModel(SakilaContext context)
+        private readonly SakilaDbContext _context;
+        public IndexModel(SakilaDbContext context)
         {
             _context = context;
         }
@@ -30,7 +31,7 @@ namespace Retro_grupp_g.Pages.Rentals
 
         private async Task LoadFilmsAsync(string? search = null)
         {
-            var query = _context.Films
+            IQueryable<Film> query = _context.Films
                 .Include(f => f.Language)
                 .Include(f => f.FilmActors).ThenInclude(fa => fa.Actor)
                 .Include(f => f.FilmCategories).ThenInclude(fc => fc.Category)
@@ -49,7 +50,7 @@ namespace Retro_grupp_g.Pages.Rentals
                 FilmId = f.FilmId,
                 Title = f.Title,
                 Description = f.Description,
-                Genres = (ICollection<Models.Category>)f.FilmCategories.Select(fc => fc.Category.Name).ToList(),
+                Genres = f.FilmCategories.Select(fc => fc.Category.Name).ToList(),
                 ReleaseYear = (int?)f.ReleaseYear,
                 Length = (int?)f.Length,
                 Rating = f.Rating,

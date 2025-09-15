@@ -13,11 +13,11 @@ namespace Retro_grupp_g.Pages.Films
 {
     public class CreateModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaContext _context;
+        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
         [BindProperty] public List<int> SelectedActorIds { get; set; } = new();
         [BindProperty] public List<int> SelectedCategoryIds { get; set; } = new();
 
-        public CreateModel(Retro_grupp_g.Data.SakilaContext context)
+        public CreateModel(Retro_grupp_g.Data.SakilaDbContext context)
         {
             _context = context;
         }

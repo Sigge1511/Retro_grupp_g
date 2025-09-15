@@ -13,8 +13,8 @@ namespace Retro_grupp_g.ViewModels
         public int? Length { get; set; }
         public string Rating { get; set; } = "";
         public string Language { get; set; } = "";
-        public virtual ICollection<Actor> Actors { get; set; } = new List<Actor>();//För att visa om en film har flera skådespelare
-        public virtual ICollection<Category> Genres { get; set; } = new List<Category>();//För att visa om en film ligger i flera genrer
+        public virtual List<string> Actors { get; set; } = new List<string>();//För att visa om en film har flera skådespelare
+        public List<string> Genres { get; set; } = new(); // ⬅️ ändrat för att slippa castingfel
 
         public string ActorSummary { get; set; } = ""; //Egen sammanfattning? Men när sätts den isf?
         public string IsAvailable { get; set; }
