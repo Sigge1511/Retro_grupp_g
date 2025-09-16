@@ -60,10 +60,24 @@ namespace Retro_grupp_g.Pages
                   Name = s.FirstName + " " + s.LastName
               }).ToListAsync();
 
+            // Kontrollera om någon sökning gjorts
+            bool hasSearch = !string.IsNullOrEmpty(SearchTitle)
+                          || !string.IsNullOrEmpty(SearchActor)
+                          || !string.IsNullOrEmpty(SearchGenre);
+
+            if (!hasSearch)
+            {
+                // Visa ingen film om ingen sökning gjorts (för att undvika lång laddning)
+                Filmer = new List<FilmViewModel>();
+                return;
+            }
+
+
             //Ladda filmer för sökning
             var query = _context.Films
                 .Include(f => f.FilmActors).ThenInclude(fa => fa.Actor)
                 .Include(f => f.FilmCategories).ThenInclude(fc => fc.Category)
+                .Include(f => f.Language)//Tillagt
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(SearchTitle))
@@ -84,9 +98,12 @@ namespace Retro_grupp_g.Pages
                     g.Category.Name.Contains(SearchGenre)));
             }
 
+            var filmer = await query.Take(50).ToListAsync();//Tillagt
+
+
             //Lägg till regissörsök
 
-            var filmer = await query.ToListAsync();
+            
 
             Filmer = filmer.Select(f => new FilmViewModel
             {
