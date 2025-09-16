@@ -5,7 +5,7 @@ namespace Retro_grupp_g.Models;
 
 public partial class NicerButSlowerFilmList
 {
-    public ushort Fid { get; set; }
+    public int Fid { get; set; }
 
     public string Title { get; set; } = null!;
 

@@ -11,7 +11,7 @@ public partial class Rental
 
     public uint InventoryId { get; set; }
 
-    public ushort CustomerId { get; set; }
+    public int CustomerId { get; set; }
 
     public DateTime? ReturnDate { get; set; }
 
@@ -26,4 +26,5 @@ public partial class Rental
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
     public virtual Staff Staff { get; set; } = null!;
+    public int FilmId { get; internal set; }
 }
