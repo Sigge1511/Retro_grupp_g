@@ -10,8 +10,8 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Kund-ID</th>
             <th>Namn</th>
+            <th>Kund-ID</th>
             <th>E-post</th>
             <th>Aktiv</th>
             <th></th>
@@ -20,10 +20,10 @@
     <tbody>
         @foreach (var c in Model.Customers)
         {
-            <tr>
-            <td>@c.CustomerId</td>
+            <tr> 
             <td>@c.FirstName @c.LastName</td>
-            <td>@c.Email</td>
+            <td>@c.CustomerId</td>
+            <td>@c.Email</td>   
             <td>@(c.Active == true ? "Ja" : "Nej")</td>
             <td>
                 <a asp-page="Details" asp-route-id="@c.CustomerId">Visa</a>
