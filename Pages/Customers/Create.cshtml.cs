@@ -28,8 +28,8 @@ namespace Retro_grupp_g.Pages.Customers
         {
             await LoadDropdowns();
 
-            if (Customer.Active == null) Customer.Active = true;
-            if (Customer.CreateDate == default) Customer.CreateDate = DateTime.UtcNow;
+            Customer.CreateDate = DateTime.UtcNow;
+            Customer.Active = true;
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -40,8 +40,8 @@ namespace Retro_grupp_g.Pages.Customers
                 return Page();
             }
 
-            if (Customer.Active == null) Customer.Active = true;
-            if (Customer.CreateDate == default) Customer.CreateDate = DateTime.UtcNow;
+            if (Customer.CreateDate == default)
+                Customer.CreateDate = DateTime.UtcNow;
 
             await _repo.AddAsync(Customer);
             await _repo.SaveAsync();

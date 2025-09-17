@@ -24,7 +24,7 @@
             <td>@c.FirstName @c.LastName</td>
             <td>@c.CustomerId</td>
             <td>@c.Email</td>   
-            <td>@(c.Active == true ? "Ja" : "Nej")</td>
+            <td>@(c.Active ? "Ja" : "Nej")</td>
             <td>
                 <a asp-page="Details" asp-route-id="@c.CustomerId">Visa</a>
                 <a asp-page="Edit" asp-route-id="@c.CustomerId">Redigera</a>

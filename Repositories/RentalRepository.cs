@@ -13,6 +13,7 @@ namespace Retro_grupp_g.Repositories
         public Task<List<Rental>> GetOpenRentalsByCustomerAsync(int customerId) =>
             _db.Rentals
             .Include(r => r.Inventory)
+            .ThenInclude(i => i.Film)
             .Where(r => r.CustomerId == customerId && r.ReturnDate == null)
             .OrderByDescending(r => r.RentalDate)
             .ToListAsync();
@@ -33,16 +34,15 @@ namespace Retro_grupp_g.Repositories
                 ? (byte)staffId.Value
                 : (byte)await _db.Staff.Select(s => s.StaffId).FirstAsync();
 
-            ushort customerIdU16 = (ushort)customerId;
-
             var rental = new Rental
             {
                 InventoryId = availableInventoryId.Value,
-                CustomerId = customerIdU16,
+                CustomerId = customerId,                 
                 StaffId = chosenStaffId,
-                RentalDate = DateTime.UtcNow,   
-                ReturnDate = null               
+                RentalDate = DateTime.UtcNow,
+                ReturnDate = null
             };
+
 
             await _db.Rentals.AddAsync(rental);
             await _db.SaveChangesAsync();

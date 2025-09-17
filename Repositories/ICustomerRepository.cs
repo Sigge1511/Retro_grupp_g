@@ -10,7 +10,7 @@ namespace Retro_grupp_g.Repositories
         Task UpdateAsync (Customer customer);
         Task DeleteAsync (int id);
         Task SaveAsync();
-        Task<Customer?> GetDetailsAsync(ushort id);
+        Task<Customer?> GetDetailsAsync(int id);
 
 
     }

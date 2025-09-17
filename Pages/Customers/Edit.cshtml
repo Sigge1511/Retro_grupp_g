@@ -34,12 +34,7 @@
         <span asp-validation-for="Customer.Email" class="text-danger"></span>
     </div>
     <div class="form-check mb-2">
-        <input type="checkbox"
-               class="form-check-input"
-               name="Customer.Active"
-               value="true"
-               @(Model.Customer.Active == true ? "checked" : "") />
-        <input type="hidden" name="Customer.Active" value="false" />
-        <label class="form-check-label">Active</label>
+        <input asp-for="Customer.Active" class="form-check-input" />
+        <label asp-for="Customer.Active" class="form-check-label"></label>
     </div>
     </form> 

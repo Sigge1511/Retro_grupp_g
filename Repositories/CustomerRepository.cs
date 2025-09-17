@@ -17,7 +17,7 @@ namespace Retro_grupp_g.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            var c = await _db.Customers.FindAsync((ushort)id);
+            var c = await _db.Customers.FindAsync((int)id);
             if (c != null) _db.Customers.Remove(c);
         }
 
@@ -28,7 +28,7 @@ namespace Retro_grupp_g.Repositories
                .ToListAsync();
 
         public Task<Customer?> GetByIdAsync(int id) =>
-            _db.Customers.FindAsync((ushort)id).AsTask();
+            _db.Customers.FindAsync((int)id).AsTask();
 
         public Task SaveAsync() => _db.SaveChangesAsync();
 
@@ -37,7 +37,7 @@ namespace Retro_grupp_g.Repositories
             _db.Customers.Update(customer);
             return Task.CompletedTask;
         }
-        public async Task<Customer?> GetDetailsAsync(ushort id)
+        public async Task<Customer?> GetDetailsAsync(int id)
         {
             return await _db.Customers
                 .Include(c => c.Rentals)

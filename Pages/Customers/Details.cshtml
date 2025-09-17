@@ -9,7 +9,7 @@
     <p><strong>Namn:</strong> @Model.Customer.FirstName @Model.Customer.LastName</p>
     <p><strong>Kund-ID:</strong> @Model.Customer.CustomerId </p>
     <p><strong>E-post:</strong> @Model.Customer.Email</p>
-    <p><strong>Aktiv:</strong> @(Model.Customer.Active == true ? "Ja" : "Nej")</p>
+    <p><strong>Aktiv:</strong> @(Model.Customer.Active ? "Ja" : "Nej")</p>
     <p><strong>Butik:</strong> @Model.Customer.StoreId</p>
     <p><strong>Adress:</strong> @Model.Customer.AddressId</p>
     <p><strong>Skapad:</strong> @Model.Customer.CreateDate</p>
@@ -22,7 +22,10 @@
     <ul>
         @foreach (var rental in Model.Customer.Rentals.Where(r => r.ReturnDate == null))
         {
-            <li>@rental.Inventory.Film.Title (Uthyrd: @rental.RentalDate)</li>
+            <li>
+                @rental.Inventory?.Film?.Title
+                (Uthyrd: @rental.RentalDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm"))
+            </li>
         }
     </ul>
 }
