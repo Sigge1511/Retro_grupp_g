@@ -14,25 +14,16 @@
 
 
 <body>
-    <header>
-        <!-- NAVBAR syns även på index -->
+    <header class="navbar">
+        <nav class="navbar-container">
+            <a asp-page="/Index" class="navbar-logo" style="margin-right: 3rem">Retro Grupp G</a>            
+            <a asp-page="/Index" class="mynav-link">Startsida</a>
+            <a asp-page="/Films/Index" class="mynav-link">Filmer</a>
+            <a asp-page="/Actors/Index" class="mynav-link">Skådespelare</a>
+            <a asp-page="/Categories/Index" class="mynav-link">Kategorier</a>
+            <a asp-page="/Testing/testdesign" class="mynav-link">Designtest</a>
 
-            <nav class="navbar">
-                <div class="navbar-container">
-                    <a asp-page="/Index" class="mynav-link">Hem</a>
-                    <a asp-page="/Rent" class="mynav-link">Hyr</a>
-                    <a asp-page="/Return" class="mynav-link">Åter</a>
-                    <a asp-page="/Search" class="mynav-link">Sök</a>
-                    <a asp-page="/Customer" class="mynav-link">Kund</a>
-                    <a asp-page="/Film" class="mynav-link">Film</a>
-                    <a asp-page="/Fee" class="mynav-link">Avgift</a>
-                    <a asp-page="/Inspo" class="mynav-link">Inspo</a>
-                    <a asp-page="/Reports" class="mynav-link">Rapporter</a>
-                    <a asp-page="/Settings" class="mynav-link">Inställningar</a>
-                    <a asp-page="/Help" class="mynav-link">Hjälp</a>
-                </div>
-            </nav>
-        
+        </nav>
     </header>
 
     <div class="page">
@@ -47,5 +38,8 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+
+    
 </body>
 </html>

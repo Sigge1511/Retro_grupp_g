@@ -12,9 +12,8 @@ namespace Retro_grupp_g.Pages
             _logger = logger;
         }
 
-        public void OnGet()
-        {
 
-        }
+
+       
     }
 }

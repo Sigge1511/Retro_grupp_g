@@ -5,7 +5,7 @@ namespace Retro_grupp_g.Models;
 
 public partial class Customer
 {
-    public ushort CustomerId { get; set; }
+    public int CustomerId { get; set; }
 
     public byte StoreId { get; set; }
 
@@ -15,9 +15,9 @@ public partial class Customer
 
     public string? Email { get; set; }
 
-    public ushort AddressId { get; set; }
+    public int AddressId { get; set; }
 
-    public bool? Active { get; set; }
+    public string Active { get; set; } = "y";
 
     public DateTime CreateDate { get; set; }
 

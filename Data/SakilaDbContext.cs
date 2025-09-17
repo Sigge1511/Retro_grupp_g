@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 using Retro_grupp_g.Models;
 
 namespace Retro_grupp_g.Data;
@@ -312,6 +311,7 @@ public partial class SakilaDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp")
                 .HasColumnName("last_update");
+                
             entity.Property(e => e.Length).HasColumnName("length");
             entity.Property(e => e.OriginalLanguageId).HasColumnName("original_language_id");
             entity.Property(e => e.Rating)

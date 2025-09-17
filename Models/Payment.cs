@@ -5,9 +5,9 @@ namespace Retro_grupp_g.Models;
 
 public partial class Payment
 {
-    public ushort PaymentId { get; set; }
+    public int PaymentId { get; set; }
 
-    public ushort CustomerId { get; set; }
+    public int CustomerId { get; set; }
 
     public byte StaffId { get; set; }
 

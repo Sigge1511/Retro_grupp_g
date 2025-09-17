@@ -5,7 +5,7 @@ namespace Retro_grupp_g.Models;
 
 public partial class Country
 {
-    public ushort CountryId { get; set; }
+    public int CountryId { get; set; }
 
     public string Country1 { get; set; } = null!;
 

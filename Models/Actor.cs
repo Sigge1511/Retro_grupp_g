@@ -6,7 +6,7 @@ namespace Retro_grupp_g.Models;
 public partial class Actor
 {
 
-    public ushort ActorId { get; set; }
+    public int ActorId { get; set; }
 
     public string FirstName { get; set; } = null!;
 

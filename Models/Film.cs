@@ -42,6 +42,7 @@ public partial class Film
     public string? Rating { get; set; }
     [Column("special_features")]
 
+    [Column("special_features")]
     public string? SpecialFeatures { get; set; }
 
     [Column("last_update")]
