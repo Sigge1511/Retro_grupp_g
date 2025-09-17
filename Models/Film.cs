@@ -9,7 +9,7 @@ public partial class Film
 {
     [Column("film_id")]
 
-    public ushort FilmId { get; set; }
+    public int FilmId { get; set; }
     [Column("title")]
 
     public string Title { get; set; } = null!;
@@ -40,8 +40,9 @@ public partial class Film
     [Column("rating")]
 
     public string? Rating { get; set; }
-    [Column("special_features")]
+   
 
+    [Column("special_features")]
     public string? SpecialFeatures { get; set; }
 
     [Column("last_update")]

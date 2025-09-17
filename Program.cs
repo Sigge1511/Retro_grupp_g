@@ -1,10 +1,13 @@
 
+using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Retro_grupp_g.Data;
 using Retro_grupp_g.Repositories;
+
 
 namespace Retro_grupp_g
 {
@@ -14,7 +17,8 @@ namespace Retro_grupp_g
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // --- Kulturinst�llningar: sv-SE ---
+            // --- Kulturinställningar: sv-SE. För att kunna hantera decimaltecken
+            // i tex priser med både 1,5 och 1.5. Hjälpte till för att undvika errors---
             var supportedCultures = new[] { new CultureInfo("sv-SE") };
             builder.Services.Configure<RequestLocalizationOptions>(options =>
             {

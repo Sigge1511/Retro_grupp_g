@@ -1,0 +1,49 @@
+﻿@page
+@model Retro_grupp_g.Pages.Rentals.IndexModel
+@{
+	ViewData["Title"] = "Uthyrning av filmer";
+
+}
+<h1>Hitta film!</h1>
+
+<form method="post">
+	<input asp-for="SearchTerm" placeholder="Sök på titel, skådespelare, regissör, genre" />
+	<button type="submit">Sök</button>
+</form>
+
+<table>
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Genre</th>
+			<th>Språk</th>
+			<th>Skådespelare</th>
+			<th>Tillgänglig</th>
+			<th>Åtgärder</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var film in Model.Films)
+		{
+			var isAvailable = true; //måste implementera koll mot Inventory/Rental senare
+			<tr>
+				<td>@film.Title</td>
+				<td>@string.Join(",", film.Genres)</td>
+				<td>@film.Language</td>
+				<td>@film.ActorSummary</td>
+				<td>@(isAvailable ? "Tillgänglig" : "Uthyrd")</td>
+				<td>
+					@if (isAvailable)
+					{
+						<a asp-asp-page="./Rent" asp-route-filmiId="@film.FilmId>Hyr ut<"></a>
+
+					}
+					else
+					{
+						<span>Ej tillgänglig</span>
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

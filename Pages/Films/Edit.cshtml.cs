@@ -21,7 +21,7 @@ namespace Retro_grupp_g.Pages.Films
         }
 
         [BindProperty] public List<int> SelectedCategoryIds { get; set; } = new();
-        [BindProperty] public List<ushort> SelectedActorIds { get; set; } = new();
+        [BindProperty] public List<int> SelectedActorIds { get; set; } = new();
 
         [BindProperty] public Film Film { get; set; } = default!;
 
@@ -90,9 +90,14 @@ namespace Retro_grupp_g.Pages.Films
                 .ToList();            
         }
 
+        public List<int> GetSelectedActorIds()
+        {
+            return SelectedActorIds;
+        }
+
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more information, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync(int id)
+        public async Task<IActionResult> OnPostAsync(int id, List<int> selectedActorIds)
         {
             var film = await _context.Films
                 .Include(f => f.FilmCategories)
@@ -137,7 +142,7 @@ namespace Retro_grupp_g.Pages.Films
             var toRemoveActors = film.FilmActors.Where(fa => !SelectedActorIds.Contains(fa.ActorId)).ToList();
             foreach (var fa in toRemoveActors) _context.FilmActors.Remove(fa);
 
-            var toAddActorIds = SelectedActorIds.Except(existingActorIds);
+            var toAddActorIds = selectedActorIds.Except(existingActorIds);
             foreach (var actorId in toAddActorIds)
                 _context.FilmActors.Add(new FilmActor { FilmId = film.FilmId, ActorId = actorId });
 
