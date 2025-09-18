@@ -9,14 +9,13 @@ namespace Retro_grupp_g.Repositories
         private readonly SakilaDbContext _db;
         public RentalRepository(SakilaDbContext db) => _db = db;
 
-
         public Task<List<Rental>> GetOpenRentalsByCustomerAsync(int customerId) =>
             _db.Rentals
-            .Include(r => r.Inventory)
-            .Where(r => r.CustomerId == customerId && r.ReturnDate == null)
-            .OrderByDescending(r => r.RentalDate)
-            .ToListAsync();
-
+               .AsNoTracking()
+               .Include(r => r.Inventory)
+               .Where(r => r.CustomerId == (ushort)customerId && r.ReturnDate == null)
+               .OrderByDescending(r => r.RentalDate)
+               .ToListAsync();
 
         public async Task<bool> RentAsync(int customerId, int filmId, int? staffId = null)
         {
@@ -26,22 +25,19 @@ namespace Retro_grupp_g.Repositories
                 .Select(i => (uint?)i.InventoryId)
                 .FirstOrDefaultAsync();
 
-            if (availableInventoryId is null)
-                return false;
+            if (availableInventoryId is null) return false;
 
             byte chosenStaffId = staffId.HasValue
                 ? (byte)staffId.Value
                 : (byte)await _db.Staff.Select(s => s.StaffId).FirstAsync();
 
-            ushort customerIdU16 = (ushort)customerId;
-
             var rental = new Rental
             {
                 InventoryId = availableInventoryId.Value,
-                CustomerId = customerIdU16,
+                CustomerId = (ushort)customerId,
                 StaffId = chosenStaffId,
-                RentalDate = DateTime.UtcNow,   
-                ReturnDate = null               
+                RentalDate = DateTime.UtcNow,
+                ReturnDate = null
             };
 
             await _db.Rentals.AddAsync(rental);
@@ -49,16 +45,41 @@ namespace Retro_grupp_g.Repositories
             return true;
         }
 
-        public async Task ReturnAsync(int rentalId)
+        public async Task<(IReadOnlyList<(int InventoryId, int FilmId, 
+                                        string Title)> Films,
+                           IReadOnlyList<(int CustomerId, string FullName, 
+                                        string Email)> Customers)>OnGetReturnAsync()
         {
-            var rental = await _db.Rentals.FindAsync(rentalId);
-            if (rental == null) return; 
+            var filmsRaw = await _db.Inventories
+                .AsNoTracking()
+                .Select(i => new
+                {
+                    InventoryId = (int)i.InventoryId, // uint -> int för enkelhet i ViewData
+                    i.FilmId,
+                    Title = i.Film.Title
+                })
+                .OrderBy(x => x.Title)
+                .ToListAsync();
 
-            if (rental.ReturnDate == null)
-            {
-                rental.ReturnDate = DateTime.UtcNow;
-                await _db.SaveChangesAsync();
-            }
+            var customersRaw = await _db.Customers
+                .AsNoTracking()
+                .Select(c => new
+                {
+                    c.CustomerId,
+                    FullName = c.FirstName + " " + c.LastName,
+                    c.Email
+                })
+                .OrderBy(x => x.FullName)
+                .ToListAsync();
+
+            return (
+                filmsRaw.Select(x => (x.InventoryId, x.FilmId, x.Title)).ToList(),
+                customersRaw.Select(x => (x.CustomerId, x.FullName, x.Email)).ToList()
+            );
         }
+
+        public Task ReturnNormalAsync(int rentalId) => Task.CompletedTask; // implementeras senare
+        public Task ReturnLateAsync(int rentalId) => Task.CompletedTask;
+        public Task ReturnDamagedAsync(int rentalId) => Task.CompletedTask;
     }
 }

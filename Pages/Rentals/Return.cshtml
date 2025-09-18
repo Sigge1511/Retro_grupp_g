@@ -1,0 +1,145 @@
+﻿@* @page
+@model Retro_grupp_g.Rentals.ReturnModel
+@{
+    ViewData["Title"] = "Lämna tillbaka film";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Returer</h1>
+<div class="content">
+
+    @*  Välj film mha titelsök ---------------------------
+
+    <form method="get">
+        <div class="form-group">
+            <label for="SearchString">Sök film att lämna tillbaka:</label>
+            <input type="text" name="SearchString" value="@Model.SearchString" class="form-control" />
+            <input type="submit" value="Sök" class="btn btn-primary mt-2" />
+        </div>
+    </form>
+
+    Visa utvalda detaljer om filmen
+    bekräfta att det är rätt film
+
+    Kolla om filmen är uthyrd?
+
+    Kolla om filmen är försenad
+        Ta fram rätt avgift för sen återlämning
+
+    Kolla om filmen är skadad
+        Ta fram rätt avgift för skadad film
+
+        Skapa en knapp för att bekräfta återlämning
+        om allt är ok : lägg till i inventory som tillgänglig igen i den aktuella butiken och ta bort från kundens lista över uthyrda filmer
+
+        om den är sen: ta betalt för sen återlämning och lägg till i inventory igen i den aktuella butiken och ta bort från kundens lista över uthyrda filmer
+
+        om den är skadad: ta betalt för skadad film och ta bort den från inventory
+
+
+    -----------------------------------------------------
+
+ *@
+
+    @*  <div class="table-content">
+        <table class="table">
+            <colgroup>
+                <col class="c-title">
+                <col class="c-desc">
+                <col class="c-year">
+                <col class="c-days">
+                <col class="c-rate">
+                <col class="c-len">
+                <col class="c-repl">
+                <col class="c-rating">
+                <col class="c-extra">
+                <col class="c-upd">
+                <col class="c-lang">
+                <col class="c-actions"> <!-- NY -->
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>
+                        Titel:
+                    </th>
+                    <th>
+                        Beskrivning:
+                    </th>
+                    <th>
+                        Premiär år:
+                    </th>
+                    <th>
+                        Antal dagar tillåtet att hyra:
+                    </th>
+                    <th>
+                        Kostnad per dag:
+                    </th>
+                    <th>
+                        Längd, i minuter:
+                    </th>
+                    <th>
+                        Kostnad för att ersätta:
+                    </th>
+                    <th>
+                        Åldersgräns:
+                    </th>
+                    <th>
+                        Extramaterial:
+                    </th>
+                    <th>
+                        Senast uppdaterad:
+                    </th>
+                    <th>
+                        Språk:
+                    </th>
+                    <th>Ändra:</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Film)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ReleaseYear)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RentalDuration)
+                        </td>
+                        <td>
+                            $ @Html.DisplayFor(modelItem => item.RentalRate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Length) minuter
+                        </td>
+                        <td>
+                            $ @Html.DisplayFor(modelItem => item.ReplacementCost)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Rating)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SpecialFeatures)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastUpdate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Language.Name)
+                        </td>
+                        <td>
+                            <a asp-page="./Edit" asp-route-id="@item.FilmId" class="small-link">Edit</a>
+                            <a asp-page="./Details" asp-route-id="@item.FilmId" class="small-link">Details</a>
+                            <a asp-page="./Delete" asp-route-id="@item.FilmId" class="small-link">Delete</a>
+                        </td>
+                    </tr>
+                 }
+            </tbody>
+        </table> *@
+    @* </div> *@
+@* </div> *@ 
