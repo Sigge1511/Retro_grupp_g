@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Retro_grupp_g.Repositories;
 
@@ -7,6 +8,9 @@ namespace Retro_grupp_g.Pages.Rentals
     {
         private readonly IRentalRepository _rentalRepository;
         private readonly ICustomerRepository _customerRepository;
+
+        [BindProperty] public int SelectedInventoryId { get; set; }
+        [BindProperty] public int SelectedCustomerId { get; set; }
 
         public ReturnModel(IRentalRepository rentalRepository, ICustomerRepository customerRepository)
         {
