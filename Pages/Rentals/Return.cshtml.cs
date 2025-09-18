@@ -25,6 +25,33 @@ namespace Retro_grupp_g.Pages.Rentals
             ViewData["Customers"] = customers; // List<(int CustomerId, string FullName, string Email)>
         }
 
+        public async Task<IActionResult> OnGetReturnPreviewAsync(int inventoryId, int customerId)
+        {
+            try
+            {
+                var p = await _rentalRepository.OnGetReturnPreviewAsync(inventoryId, customerId);
+
+                if (!p.Found)
+                    return new JsonResult(new { found = false });
+
+                return new JsonResult(new
+                {
+                    found = true,
+                    filmTitle = p.FilmTitle,
+                    rentalDate = p.RentalDate.ToString("yyyy-MM-dd"),
+                    dueDate = p.DueDate.ToString("yyyy-MM-dd"),
+                    isLate = p.IsLate,
+                    daysLate = p.DaysLate,
+                    duration = p.RentalDurationDays
+                });
+            }
+            catch (Exception ex)
+            {
+                // Returnera JSON istället för 500 så vi kan se felet i Network ? Response
+                return new JsonResult(new { found = false, error = ex.Message, stack = ex.StackTrace });
+            }
+        }
+
         //****************
         //Ta emot inventoryID och
         //rentalID från vyn

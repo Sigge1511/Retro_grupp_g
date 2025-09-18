@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Retro_grupp_g.Models;
 
@@ -26,5 +27,9 @@ public partial class Rental
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
     public virtual Staff Staff { get; set; } = null!;
+    
+    
+    // Central prop kvar – men DERIVERAD från Inventory (ingen egen DB-kolumn behövs)
+    [NotMapped]
     public int FilmId { get; internal set; }
 }

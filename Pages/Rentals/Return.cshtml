@@ -1,8 +1,12 @@
 ﻿@page
 @model Retro_grupp_g.Pages.Rentals.ReturnModel
+@using System.Text.Json
 @{
     var films = (List<(int InventoryId, int FilmId, string Title)>)ViewData["Films"];
     var customers = (List<(int CustomerId, string FullName, string Email)>)ViewData["Customers"];
+
+    // Absolut URL till handlern för OnGetReturnPreviewAsync  =>  ?handler=ReturnPreview
+    var previewUrl = Url.Page("/rentals/return", "ReturnPreview") ?? "/rentals/return?handler=ReturnPreview";
 }
 
 <h2>Returnera film</h2>
@@ -11,18 +15,18 @@
     <div class="alert alert-success">@msg</div>
 }
 
-<form method="post">
+<form method="post" id="returnForm">
     <!-- Kund -->
     <div class="mb-3">
         <label for="customerSearch" class="form-label">Kund</label>
-        <input type="text" class="form-control js-datalist" list="customersList"
+        <input type="text" class="form-control" list="customersList"
                id="customerSearch" placeholder="Skriv kundnamn eller e-post..." autocomplete="off" />
         <div class="invalid-feedback" id="customerError">Välj en kund från listan.</div>
 
         <datalist id="customersList">
             @foreach (var c in customers)
             {
-                <option value="@c.FullName (@c.Email)" data-id="@c.CustomerId"></option>
+                <option value="@c.FullName (@c.Email)"></option>
             }
         </datalist>
         <input type="hidden" asp-for="SelectedCustomerId" id="SelectedCustomerId" />
@@ -31,74 +35,138 @@
     <!-- Film -->
     <div class="mb-3">
         <label for="filmSearch" class="form-label">Film (Inventory)</label>
-        <input type="text" class="form-control js-datalist" list="filmsList"
+        <input type="text" class="form-control" list="filmsList"
                id="filmSearch" placeholder="Skriv titel..." autocomplete="off" />
         <div class="invalid-feedback" id="filmError">Välj en film från listan.</div>
 
         <datalist id="filmsList">
             @foreach (var f in films)
             {
-                <!-- visa InvId i texten för att undvika dubletter -->
-                <option value="@f.Title (InvId: @f.InventoryId)" data-id="@f.InventoryId"></option>
+                <option value="@f.Title (InvId: @f.InventoryId)"></option>
             }
         </datalist>
         <input type="hidden" asp-for="SelectedInventoryId" id="SelectedInventoryId" />
     </div>
 
-    <button class="btn btn-primary me-2" asp-page-handler="ReturnNormal">Registrera retur</button>
-    <button class="btn btn-warning me-2" asp-page-handler="ReturnLate">Sen retur</button>
-    <button class="btn btn-danger" asp-page-handler="ReturnDamaged">Skadad</button>
+    <!-- Hint (dold tills båda ID:n satta & fetch OK) -->
+    <div id="previewHint" class="alert" style="display:none" role="alert"></div>
+
+    <!-- Knappar -->
+    <button id="btnNormal" class="btn btn-primary me-2" asp-page-handler="ReturnNormal">Registrera retur</button>
+    <button id="btnLate" class="btn btn-warning me-2" asp-page-handler="ReturnLate">Sen retur</button>
+    <button id="btnDamaged" class="btn btn-danger" asp-page-handler="ReturnDamaged">Skadad</button>
+
+    <!-- Skicka handler-URL till JS -->
+    <input type="hidden" id="previewUrl" value="@previewUrl" />
 </form>
 
-@section Scripts {
-    <script>
-        (function(){
-          function wire(inputId, listId, hiddenId, errorId){
-            const input  = document.getElementById(inputId);
-            const list   = document.getElementById(listId);
-            const hidden = document.getElementById(hiddenId);
-            const error  = document.getElementById(errorId);
-            const opts   = Array.from(list.options);
+<script>
+    (() => {
+      // Serverrenderade mappar: "visad text" -> id (robust mot datalist-quirks)
+      const __customers = @Html.Raw(JsonSerializer.Serialize(
+                    customers.Select(c => new { key = $"{c.FullName} ({c.Email})", id = c.CustomerId })
+            ));
+      const __films = @Html.Raw(JsonSerializer.Serialize(
+                    films.Select(f => new { key = $"{f.Title} (InvId: {f.InventoryId})", id = f.InventoryId })
+            ));
+      const customerMap = Object.fromEntries(__customers.map(x => [x.key, String(x.id)]));
+      const filmMap     = Object.fromEntries(__films.map(x => [x.key,     String(x.id)]));
 
-            function updateHidden(){
-              const val = input.value.trim();
-              const match = opts.find(o => o.value === val); // exakt match → sätt ID
-              if (match){
-                hidden.value = match.dataset.id || "";
-                input.classList.remove("is-invalid");
-                if (error) error.style.display = "none";
-              } else {
-                hidden.value = "";
-              }
-            }
+      const form       = document.getElementById('returnForm');
+      const custInput  = document.getElementById('customerSearch');
+      const filmInput  = document.getElementById('filmSearch');
+      const custHidden = document.getElementById('SelectedCustomerId');
+      const filmHidden = document.getElementById('SelectedInventoryId');
+      const hint       = document.getElementById('previewHint');
+      const btnN       = document.getElementById('btnNormal');
+      const btnL       = document.getElementById('btnLate');
+      const previewUrl = document.getElementById('previewUrl').value; // /rentals/return?handler=ReturnPreview
 
-            input.addEventListener('input', updateHidden);
-            input.addEventListener('change', updateHidden);
+      function setInvalid(inputEl, errorId, on) {
+        const err = document.getElementById(errorId);
+        if (on) { inputEl.classList.add('is-invalid'); if (err) err.style.display = 'block'; }
+        else    { inputEl.classList.remove('is-invalid'); if (err) err.style.display = 'none'; }
+      }
+      const resolveId = (map, text) => map[text.trim()] || "";
+
+      function updateHiddenFromInput(inputEl, map, hiddenEl, errorId) {
+        const id = resolveId(map, inputEl.value);
+        hiddenEl.value = id || "";
+        if (id) setInvalid(inputEl, errorId, false);
+        refreshPreview(); // trigga direkt när id sätts
+      }
+
+      async function refreshPreview() {
+        const customerId  = custHidden.value;
+        const inventoryId = filmHidden.value;
+
+        // Visa INGENTING om inte båda id:n finns
+        if (!customerId || !inventoryId) {
+          hint.style.display = 'none';
+          hint.className = 'alert';
+          hint.textContent = '';
+          // reset highlight
+          btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
+          btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
+          return;
+        }
+
+        const url = `${previewUrl}&customerId=${encodeURIComponent(customerId)}&inventoryId=${encodeURIComponent(inventoryId)}`;
+
+        try {
+          const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+
+          if (!data.found) {
+            // Göm hint helt om ingen öppen rental matchar
+            hint.style.display = 'none';
+            hint.className = 'alert';
+            hint.textContent = '';
+            btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
+            btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
+            return;
           }
 
-          wire('customerSearch', 'customersList', 'SelectedCustomerId', 'customerError');
-          wire('filmSearch',      'filmsList',     'SelectedInventoryId', 'filmError');
+          if (data.isLate) {
+            hint.className = 'alert alert-warning';
+            hint.textContent = `⚠️ Försenad ${data.daysLate} dag(ar). Förfallodag: ${data.dueDate}.`;
+            hint.style.display = 'block';
+            btnL.classList.remove('btn-warning'); btnL.classList.add('btn-outline-warning');
+            btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
+          } else {
+            hint.className = 'alert alert-success';
+            hint.textContent = `✅ I tid. Förfallodag: ${data.dueDate}.`;
+            hint.style.display = 'block';
+            btnN.classList.remove('btn-primary'); btnN.classList.add('btn-outline-success');
+            btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
+          }
+        } catch (err) {
+          // Vid fetch-fel: visa INGENTING
+          console.error('ReturnPreview fetch failed:', err);
+          hint.style.display = 'none';
+          hint.className = 'alert';
+          hint.textContent = '';
+          btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
+          btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
+        }
+      }
 
-          // enkel validering vid submit
-          document.querySelector('form').addEventListener('submit', function(e){
-            let ok = true;
-            const custHidden = document.getElementById('SelectedCustomerId');
-            const filmHidden = document.getElementById('SelectedInventoryId');
-            const custInput  = document.getElementById('customerSearch');
-            const filmInput  = document.getElementById('filmSearch');
+      // Koppla inputs -> hidden -> preview
+      custInput.addEventListener('input',  () => updateHiddenFromInput(custInput, customerMap, custHidden, 'customerError'));
+      custInput.addEventListener('change', () => updateHiddenFromInput(custInput, customerMap, custHidden, 'customerError'));
+      filmInput.addEventListener('input',  () => updateHiddenFromInput(filmInput,  filmMap,     filmHidden, 'filmError'));
+      filmInput.addEventListener('change', () => updateHiddenFromInput(filmInput,  filmMap,     filmHidden, 'filmError'));
 
-            if (!custHidden.value){
-              ok = false;
-              custInput.classList.add('is-invalid');
-              document.getElementById('customerError').style.display = 'block';
-            }
-            if (!filmHidden.value){
-              ok = false;
-              filmInput.classList.add('is-invalid');
-              document.getElementById('filmError').style.display = 'block';
-            }
-            if (!ok) e.preventDefault();
-          });
-        })();
-    </script>
-}
+      // Validering på submit
+      form.addEventListener('submit', (e) => {
+        let ok = true;
+        if (!custHidden.value) { setInvalid(custInput, 'customerError', true); ok = false; }
+        if (!filmHidden.value) { setInvalid(filmInput,  'filmError',    true); ok = false; }
+        if (!ok) e.preventDefault();
+      });
+
+      // Första körning (om något redan är valt)
+      refreshPreview();
+    })();
+</script>
