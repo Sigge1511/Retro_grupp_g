@@ -85,61 +85,73 @@ namespace Retro_grupp_g.Repositories
 
         //------
         public async Task<(bool Found, string FilmTitle, DateOnly RentalDate, DateOnly DueDate,
-                   bool IsLate, int DaysLate, int RentalDurationDays)>OnGetReturnPreviewAsync
-                   (int inventoryId, int customerId)
+                   bool IsLate, int DaysLate, int RentalDurationDays,
+                   int ActualCustomerId, string ActualCustomerName, bool CustomerMatches)>
+    OnGetReturnPreviewAsync(int inventoryId, int customerId)
         {
             var inv = (uint)inventoryId;
             var cid = (ushort)customerId;
 
-            // Ladda inventory + film (för att få titel & RentalDuration även i simulerat läge)
-            var inventory = await _db.Inventories
+            var row = await _db.Rentals
                 .AsNoTracking()
-                .Include(i => i.Film)
-                .FirstOrDefaultAsync(i => i.InventoryId == inv);
+                .Where(r => r.InventoryId == inv && r.ReturnDate == null)
+                .Select(r => new
+                {
+                    r.RentalDate,
+                    FilmTitle = r.Inventory.Film.Title,
+                    RentalDuration = r.Inventory.Film.RentalDuration,
+                    ActualCustomerId = r.CustomerId,
+                    FirstName = r.Customer.FirstName,
+                    LastName = r.Customer.LastName
+                })
+                .FirstOrDefaultAsync();
 
-            if (inventory is null || inventory.Film is null)
-                return (false, "", default, default, false, 0, 0);
+            if (row is null)
+                return (false, "", default, default, false, 0, 0, 0, "", false);
 
-            var film = inventory.Film;
-            var duration = Convert.ToInt32(film.RentalDuration);
+            int duration = Convert.ToInt32(row.RentalDuration);
+            var dt = row.RentalDate.Kind == DateTimeKind.Unspecified
+                        ? DateTime.SpecifyKind(row.RentalDate, DateTimeKind.Utc)
+                        : row.RentalDate;
+            var rentalDay = DateOnly.FromDateTime(dt.ToLocalTime());
+            var dueDay = rentalDay.AddDays(duration);
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            var isLate = today > dueDay;
+            var daysLate = isLate ? today.DayNumber - dueDay.DayNumber : 0;
 
-            var realRental = await _db.Rentals
-                .AsNoTracking()
+            var actualName = $"{row.FirstName} {row.LastName}";
+            var matches = row.ActualCustomerId == cid;
+
+            return (true, row.FilmTitle, rentalDay, dueDay, isLate, daysLate, duration,
+                    row.ActualCustomerId, actualName, matches);
+        }
+
+        //************************************** RETURER POST
+
+        public async Task<(bool Ok, string Message)> ReturnNormalRealAsync(int inventoryId, int customerId)
+        {
+            var inv = (uint)inventoryId;
+            var cid = (ushort)customerId;
+
+            var rental = await _db.Rentals
                 .FirstOrDefaultAsync(r => r.InventoryId == inv &&
                                           r.CustomerId == cid &&
                                           r.ReturnDate == null);
 
-            if (realRental is not null)
-            {
-                var rentDt = realRental.RentalDate;
-                if (rentDt.Kind == DateTimeKind.Unspecified)
-                    rentDt = DateTime.SpecifyKind(rentDt, DateTimeKind.Utc);
-
-                var rentalDay = DateOnly.FromDateTime(rentDt.ToLocalTime());
-                var dueDay = rentalDay.AddDays(duration);
-                var today = DateOnly.FromDateTime(DateTime.Now);
-                var isLate = today > dueDay;
-                var daysLate = isLate ? today.DayNumber - dueDay.DayNumber : 0;
-
-                return (true, film.Title, rentalDay, dueDay, isLate, daysLate, duration);
-            }
-
-            // --- SIMULERAT LÄGE (ingen öppen rental för kombon) ---
-            var simRentalDay = DateOnly.FromDateTime(DateTime.Now);        // “hyrd idag”
-            var simDue = simRentalDay.AddDays(duration);
-            return (true, film.Title, simRentalDay, simDue, false, 0, duration);
-        }
-
-        //************************************** RETURER POST
-        public async Task ReturnNormalAsync(int rentalId)
-        {
-            var rental = await _db.Rentals
-                .FirstOrDefaultAsync(r => r.RentalId == rentalId && r.ReturnDate == null);
-            if (rental is null) return; // redan returnerad eller fel id
+            if (rental is null)
+                return (false, "Ingen öppen uthyrning hittades för vald kund + film.");
 
             rental.ReturnDate = DateTime.UtcNow;
+            rental.LastUpdate = DateTime.UtcNow;
             await _db.SaveChangesAsync();
+
+            return (true, "Retur registrerad.");
         }
+
+
+
+
+
         public Task ReturnLateAsync(int rentalId) => Task.CompletedTask;
         public Task ReturnDamagedAsync(int rentalId) => Task.CompletedTask;
     }

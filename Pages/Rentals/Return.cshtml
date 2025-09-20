@@ -1,18 +1,14 @@
 ﻿@page
 @model Retro_grupp_g.Pages.Rentals.ReturnModel
-@using System.Text.Json
 @{
     var films = (List<(int InventoryId, int FilmId, string Title)>)ViewData["Films"];
     var customers = (List<(int CustomerId, string FullName, string Email)>)ViewData["Customers"];
-
-    // Absolut URL till handlern för OnGetReturnPreviewAsync  =>  ?handler=ReturnPreview
-    var previewUrl = Url.Page("/rentals/return", "ReturnPreview") ?? "/rentals/return?handler=ReturnPreview";
 }
 
 <h2>Returnera film</h2>
 @if (TempData["Msg"] is string msg)
 {
-    <div class="alert alert-success">@msg</div>
+    <div id="serverMsg" class="alert alert-info">@msg</div>
 }
 
 <form method="post" id="returnForm">
@@ -26,7 +22,7 @@
         <datalist id="customersList">
             @foreach (var c in customers)
             {
-                <option value="@c.FullName (@c.Email)"></option>
+                <option value="@c.FullName (@c.Email)" data-id="@c.CustomerId"></option>
             }
         </datalist>
         <input type="hidden" asp-for="SelectedCustomerId" id="SelectedCustomerId" />
@@ -42,36 +38,23 @@
         <datalist id="filmsList">
             @foreach (var f in films)
             {
-                <option value="@f.Title (InvId: @f.InventoryId)"></option>
+                <option value="@f.Title (InvId: @f.InventoryId)" data-id="@f.InventoryId"></option>
             }
         </datalist>
         <input type="hidden" asp-for="SelectedInventoryId" id="SelectedInventoryId" />
     </div>
 
-    <!-- Hint (dold tills båda ID:n satta & fetch OK) -->
+    <!-- Hint -->
     <div id="previewHint" class="alert" style="display:none" role="alert"></div>
 
     <!-- Knappar -->
     <button id="btnNormal" class="btn btn-primary me-2" asp-page-handler="ReturnNormal">Registrera retur</button>
     <button id="btnLate" class="btn btn-warning me-2" asp-page-handler="ReturnLate">Sen retur</button>
     <button id="btnDamaged" class="btn btn-danger" asp-page-handler="ReturnDamaged">Skadad</button>
-
-    <!-- Skicka handler-URL till JS -->
-    <input type="hidden" id="previewUrl" value="@previewUrl" />
 </form>
 
 <script>
     (() => {
-      // Serverrenderade mappar: "visad text" -> id (robust mot datalist-quirks)
-      const __customers = @Html.Raw(JsonSerializer.Serialize(
-                    customers.Select(c => new { key = $"{c.FullName} ({c.Email})", id = c.CustomerId })
-            ));
-      const __films = @Html.Raw(JsonSerializer.Serialize(
-                    films.Select(f => new { key = $"{f.Title} (InvId: {f.InventoryId})", id = f.InventoryId })
-            ));
-      const customerMap = Object.fromEntries(__customers.map(x => [x.key, String(x.id)]));
-      const filmMap     = Object.fromEntries(__films.map(x => [x.key,     String(x.id)]));
-
       const form       = document.getElementById('returnForm');
       const custInput  = document.getElementById('customerSearch');
       const filmInput  = document.getElementById('filmSearch');
@@ -80,38 +63,50 @@
       const hint       = document.getElementById('previewHint');
       const btnN       = document.getElementById('btnNormal');
       const btnL       = document.getElementById('btnLate');
-      const previewUrl = document.getElementById('previewUrl').value; // /rentals/return?handler=ReturnPreview
+      const serverMsg  = document.getElementById('serverMsg');
+
+      function clearServerMsg(){
+        if (serverMsg) serverMsg.style.display = 'none';
+      }
+      function resetHint(){
+        hint.style.display = 'none';
+        hint.className = 'alert';
+        hint.textContent = '';
+        btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
+        btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
+      }
 
       function setInvalid(inputEl, errorId, on) {
         const err = document.getElementById(errorId);
         if (on) { inputEl.classList.add('is-invalid'); if (err) err.style.display = 'block'; }
         else    { inputEl.classList.remove('is-invalid'); if (err) err.style.display = 'none'; }
       }
-      const resolveId = (map, text) => map[text.trim()] || "";
 
-      function updateHiddenFromInput(inputEl, map, hiddenEl, errorId) {
-        const id = resolveId(map, inputEl.value);
-        hiddenEl.value = id || "";
-        if (id) setInvalid(inputEl, errorId, false);
-        refreshPreview(); // trigga direkt när id sätts
+      function resolveIdFromList(listId, displayText){
+        const list = document.getElementById(listId);
+        const opt = Array.from(list.options).find(o => o.value === displayText.trim());
+        return opt?.dataset?.id || "";
       }
 
-      async function refreshPreview() {
+      function updateHidden(inputEl, listId, hiddenEl, errorId){
+        const id = resolveIdFromList(listId, inputEl.value);
+        hiddenEl.value = id;
+        if (id) setInvalid(inputEl, errorId, false);
+        clearServerMsg();  // dölj äldre TempData-meddelande
+        resetHint();       // nolla visuell hint innan ny fetch
+        refreshPreview();
+      }
+
+      async function refreshPreview(){
         const customerId  = custHidden.value;
         const inventoryId = filmHidden.value;
 
-        // Visa INGENTING om inte båda id:n finns
-        if (!customerId || !inventoryId) {
-          hint.style.display = 'none';
-          hint.className = 'alert';
-          hint.textContent = '';
-          // reset highlight
-          btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
-          btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
+        if (!customerId || !inventoryId){
+          resetHint();
           return;
         }
 
-        const url = `${previewUrl}&customerId=${encodeURIComponent(customerId)}&inventoryId=${encodeURIComponent(inventoryId)}`;
+        const url = `?handler=ReturnPreview&customerId=${encodeURIComponent(customerId)}&inventoryId=${encodeURIComponent(inventoryId)}`;
 
         try {
           const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
@@ -119,44 +114,33 @@
           const data = await res.json();
 
           if (!data.found) {
-            // Göm hint helt om ingen öppen rental matchar
-            hint.style.display = 'none';
-            hint.className = 'alert';
-            hint.textContent = '';
-            btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
-            btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
+            resetHint();
             return;
           }
 
           if (data.isLate) {
             hint.className = 'alert alert-warning';
-            hint.textContent = `⚠️ Försenad ${data.daysLate} dag(ar). Förfallodag: ${data.dueDate}.`;
+            hint.textContent = `Försenad ${data.daysLate} dag(ar). Förfallodag: ${data.dueDate}.`;
             hint.style.display = 'block';
             btnL.classList.remove('btn-warning'); btnL.classList.add('btn-outline-warning');
             btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
           } else {
             hint.className = 'alert alert-success';
-            hint.textContent = `✅ I tid. Förfallodag: ${data.dueDate}.`;
+            hint.textContent = `I tid. Förfallodag: ${data.dueDate}.`;
             hint.style.display = 'block';
             btnN.classList.remove('btn-primary'); btnN.classList.add('btn-outline-success');
             btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
           }
-        } catch (err) {
-          // Vid fetch-fel: visa INGENTING
-          console.error('ReturnPreview fetch failed:', err);
-          hint.style.display = 'none';
-          hint.className = 'alert';
-          hint.textContent = '';
-          btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary');
-          btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning');
+        } catch {
+          resetHint();
         }
       }
 
-      // Koppla inputs -> hidden -> preview
-      custInput.addEventListener('input',  () => updateHiddenFromInput(custInput, customerMap, custHidden, 'customerError'));
-      custInput.addEventListener('change', () => updateHiddenFromInput(custInput, customerMap, custHidden, 'customerError'));
-      filmInput.addEventListener('input',  () => updateHiddenFromInput(filmInput,  filmMap,     filmHidden, 'filmError'));
-      filmInput.addEventListener('change', () => updateHiddenFromInput(filmInput,  filmMap,     filmHidden, 'filmError'));
+      // Wire-up
+      custInput.addEventListener('input',  () => updateHidden(custInput, 'customersList', custHidden, 'customerError'));
+      custInput.addEventListener('change', () => updateHidden(custInput, 'customersList', custHidden, 'customerError'));
+      filmInput.addEventListener('input',  () => updateHidden(filmInput,  'filmsList',     filmHidden, 'filmError'));
+      filmInput.addEventListener('change', () => updateHidden(filmInput,  'filmsList',     filmHidden, 'filmError'));
 
       // Validering på submit
       form.addEventListener('submit', (e) => {
@@ -166,7 +150,7 @@
         if (!ok) e.preventDefault();
       });
 
-      // Första körning (om något redan är valt)
-      refreshPreview();
+      // Init
+      resetHint();
     })();
 </script>
