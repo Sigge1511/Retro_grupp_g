@@ -17,7 +17,8 @@ namespace Retro_grupp_g.Pages.Rentals
             _rentalRepository = rentalRepository;
             _customerRepository = customerRepository;
         }
-
+        
+        //**************** GET RETUR **********************************************************
         public async Task OnGetAsync()
         {
             var (films, customers) = await _rentalRepository.OnGetReturnAsync();
@@ -45,7 +46,7 @@ namespace Retro_grupp_g.Pages.Rentals
             });
         }
 
-        //****************
+        //*************** POST NORMAL RETUR **********************************************************
         public async Task<IActionResult> OnPostReturnNormalAsync()
         {
             // 1) Grundvalidering
@@ -91,12 +92,38 @@ namespace Retro_grupp_g.Pages.Rentals
             }
         }
 
-        //Task för att ta betalt för sen återlämning och ropa på RentalRepository
+        //*************** POST SEN RETUR *************************
+        public async Task<IActionResult> OnPostReturnLateAsync()
+        {
+            if (SelectedInventoryId <= 0 || SelectedCustomerId <= 0)
+            {
+                TempData["Msg"] = "Välj kund och film.";
+                await OnGetAsync();
+                return Page();
+            }
+
+            // Preview baseras på inventory (kund får gärna vara annan ? mock är tillåtet)
+            var preview = await _rentalRepository.GetLateFeePreviewByInventoryAsync(SelectedInventoryId);
+
+            if (!preview.Found)
+            {
+                TempData["Msg"] = "Ingen öppen uthyrning hittades för vald film.";
+                await OnGetAsync();
+                return Page();
+            }
+
+            if (preview.DaysLate <= 0)
+            {
+                TempData["Msg"] = $"Returen är inte sen. Förfallodag: {preview.DueDate:yyyy-MM-dd}.";
+                await OnGetAsync();
+                return Page();
+            }
+
+            return RedirectToPage("/Rentals/Fee", new { rentalId = preview.RentalId });
+        }
 
         //Task för att ta betalt för skadad film och ropa på RentalRepository
 
-        //
-        //erw4etwrt
         //****************
     }
 }
