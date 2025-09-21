@@ -30,7 +30,7 @@ namespace Retro_grupp_g.Pages.Rentals
         {
             _rentalRepository = rentalRepository;
         }
-
+        // GET LATE
         public async Task<IActionResult> OnGetAsync()
         {
             if (RentalId <= 0)
@@ -75,45 +75,27 @@ namespace Retro_grupp_g.Pages.Rentals
         // POST LATE
         public async Task<IActionResult> OnPostReturnLateAsync()
         {
+            // Din logik för att kontrollera ID:n
             if (RentalId <= 0 || InventoryId <= 0 || CustomerId <= 0)
             {
                 TempData["Msg"] = "Ogiltiga data vid bekräftelse.";
                 return RedirectToPage("/Rentals/Return");
             }
-            
-            var rental = await _rentalRepository.GetOpenRentalByIdAsync(RentalId)
-                         ?? await _rentalRepository.GetOpenRentalByInventoryAsync(InventoryId);
-            if (rental is null)
-            {
-                TempData["Msg"] = "Uthyrningen är redan hanterad eller saknas.";
-                return RedirectToPage("/Rentals/Return");
-            }
-            var rentDt = rental.RentalDate.Kind == DateTimeKind.Unspecified
-                ? DateTime.SpecifyKind(rental.RentalDate, DateTimeKind.Utc)
-                : rental.RentalDate;
-            var rentalDay = DateOnly.FromDateTime(rentDt.ToLocalTime());
-            int duration = Convert.ToInt32(rental.Inventory?.Film?.RentalDuration ?? 0);
-            var due = rentalDay.AddDays(duration);
-            var today = DateOnly.FromDateTime(DateTime.Now);
-            
-            var daysLate = today > due ? today.DayNumber - due.DayNumber : 0;
-            var fee = daysLate == 0 ? 0m : (daysLate <= 3 ? 5m : 15m);
-            if (daysLate <= 0)
-            {
-                TempData["Msg"] = $"Returen är inte sen. Förfallodag: {due:yyyy-MM-dd}.";
-                return RedirectToPage("/Rentals/Return");
-            }
-            var isReal = rental.CustomerId == (ushort)CustomerId;
-            if (!isReal)
-            {
-                TempData["Msg"] =
-                    $"Ej rätt kund som gör retur. Sen {daysLate} dag(ar). " +
-                    $"Förfallodag: {due:yyyy-MM-dd}. Avgift: ${fee:0.00}. Ingen ändring sparad.";
-                return RedirectToPage("/Rentals/Return");
-            }
-            await _rentalRepository.ReturnLateRealAsync((int)rental.RentalId, (int)fee);
 
-            TempData["Msg"] = $"Sen retur registrerad. Avgift: ${fee:0.00}.";
+            // Nu kommer dekonstruktionen att fungera
+            var (found, isLate, daysLate, dueDate, filmTitle, feeAmount, isReal, rentalId, actualCustomerName) =
+                await _rentalRepository.ReturnLateRealAsync(InventoryId, CustomerId);
+
+            // Hantera meddelanden baserat på 'isReal'
+            if (isReal)
+            {
+                TempData["Msg"] = $"Sen retur registrerad. Avgift: ${feeAmount:0.00}.";
+            }
+            else
+            {
+                TempData["Msg"] = $"Ej rätt kund som gör retur. Avgiften är ${feeAmount:0.00}. Ingen ändring har sparats i databasen.";
+            }
+
             return RedirectToPage("/Rentals/Return");
         }
     }

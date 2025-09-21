@@ -46,7 +46,7 @@ namespace Retro_grupp_g.Repositories
         }
         
         
-//*********************** RETURER ****************************************************************
+//*********************** RETURER NORMAL ****************************************************************
         //GET
         public async Task<(IReadOnlyList<(int InventoryId, int FilmId, 
                                         string Title)> Films,
@@ -122,7 +122,7 @@ namespace Retro_grupp_g.Repositories
             return (true, row.FilmTitle, rentalDay, dueDay, isLate, daysLate, duration,
                     row.ActualCustomerId, actualName, matches);
         }
-    //************************************** RETURER POST ***************
+    //**************     RETURER POST ***************
         public async Task<(bool Ok, string Message)> ReturnNormalRealAsync(int inventoryId, int customerId)
         {
             var inv = (uint)inventoryId;
@@ -143,7 +143,10 @@ namespace Retro_grupp_g.Repositories
             return (true, "Retur registrerad.");
         }
 
-        //********************** SENA RETURER **********************************************************
+
+
+
+//********************** SENA RETURER **********************************************************
         private static (int daysLate, ushort fee) CalcLateFee(DateOnly rentalDay, int rentalDurationDays)
         {
             var due = rentalDay.AddDays(rentalDurationDays);
@@ -227,48 +230,76 @@ namespace Retro_grupp_g.Repositories
         }
 
         //--- Bekräfta “sen retur”: markera retur + skapa payment
-        public async Task<(bool Found, bool IsLate, int DaysLate, DateOnly DueDate, 
-            string FilmTitle, ushort FeeAmount, bool IsReal, int? RentalId, 
-            string ActualCustomerName)>ReturnLateRealAsync(int inventoryId, int customerId)
+        public async Task<(bool Found, bool IsLate, int DaysLate, DateOnly DueDate,
+    string FilmTitle, ushort FeeAmount, bool IsReal, int? RentalId,
+    string ActualCustomerName)> ReturnLateRealAsync(int inventoryId, int customerId)
         {
             var inv = (uint)inventoryId;
             var cid = (ushort)customerId;
 
-            var row = await _db.Rentals
+            var result = await _db.Rentals
                 .AsNoTracking()
                 .Where(r => r.InventoryId == inv && r.ReturnDate == null)
                 .Select(r => new
                 {
-                    r.RentalId,
-                    r.CustomerId,
-                    r.RentalDate,
-                    Title = r.Inventory.Film.Title,
-                    Duration = r.Inventory.Film.RentalDuration,
-                    First = r.Customer.FirstName,
-                    Last = r.Customer.LastName
+                    Rental = r,
+                    FilmTitle = r.Inventory.Film.Title,
+                    RentalDuration = r.Inventory.Film.RentalDuration,
+                    ActualCustomerFirstName = r.Customer.FirstName,
+                    ActualCustomerLastName = r.Customer.LastName,
+                    ActualCustomerId = r.CustomerId
                 })
                 .FirstOrDefaultAsync();
 
-            if (row is null)
+            if (result is null)
                 return (false, false, 0, default, "", 0, false, null, "");
 
-            var rentDt = row.RentalDate.Kind == DateTimeKind.Unspecified
-                ? DateTime.SpecifyKind(row.RentalDate, DateTimeKind.Utc)
-                : row.RentalDate;
-
-            var rentalDay = DateOnly.FromDateTime(rentDt.ToLocalTime());
-            var duration = Convert.ToInt32(row.Duration);
+            // Now, let's process the data we fetched.
+            var rentalDay = DateOnly.FromDateTime(result.Rental.RentalDate.ToLocalTime());
+            var duration = Convert.ToInt32(result.RentalDuration);
             var due = rentalDay.AddDays(duration);
             var (daysLate, fee) = CalcLateFee(rentalDay, duration);
 
             var isLate = daysLate > 0;
-            var isReal = row.CustomerId == cid;
+            var isReal = result.ActualCustomerId == cid;
 
-            return (true, isLate, daysLate, due, row.Title, fee, isReal, (int)row.RentalId, $"{row.First} {row.Last}");
+            // If it's a "real" return, update the database.
+            if (isReal)
+            {
+                // First, get the tracking entity to update.
+                var rentalToUpdate = await _db.Rentals
+                    .Where(r => r.RentalId == result.Rental.RentalId)
+                    .FirstOrDefaultAsync();
+
+                if (rentalToUpdate is not null)
+                {
+                    rentalToUpdate.ReturnDate = DateTime.UtcNow;
+                    rentalToUpdate.LastUpdate = DateTime.UtcNow;
+
+                    if (fee > 0)
+                    {
+                        var payment = new Payment
+                        {
+                            CustomerId = rentalToUpdate.CustomerId,
+                            StaffId = rentalToUpdate.StaffId,
+                            RentalId = rentalToUpdate.RentalId,
+                            Amount = fee,
+                            PaymentDate = DateTime.UtcNow
+                        };
+                        await _db.Payments.AddAsync(payment);
+                    }
+                    await _db.SaveChangesAsync();
+                }
+            }
+
+            // Return the result
+            return (true, isLate, daysLate, due, result.FilmTitle, fee, isReal, (int)result.Rental.RentalId, $"{result.ActualCustomerFirstName} {result.ActualCustomerLastName}");
         }
 
-//********************** SKADAD RETUR/BORTTAPPAD **********************************************************
+        //********************** SKADAD RETUR/BORTTAPPAD **********************************************************
         public Task ReturnDamagedAsync(int rentalId) => Task.CompletedTask;
+
+
 
 //********************** HJÄLPMETODER **********************************************************
         public Task<Rental?> GetOpenRentalByInventoryAsync(int inventoryId)

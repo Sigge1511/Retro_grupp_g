@@ -17,11 +17,7 @@ namespace Retro_grupp_g.Repositories
 //              NORMAL RETURER *********    Endast riktig retur om kund+film matchar
         Task<(bool Ok, string Message)> ReturnNormalRealAsync(int inventoryId, int customerId);
 
-        //********************** SENA RETURER **********************************************************
-        // Returnerar meddelande + status. Sparar endast vid Real = true.
-        Task<(bool Found, bool IsLate, int DaysLate, DateOnly DueDate,
-            string FilmTitle, ushort FeeAmount, bool IsReal, int? RentalId,
-            string ActualCustomerName)> ReturnLateRealAsync(int inventoryId, int customerId);
+        //********************** SENA RETURER **********************************************************       
         // LATE preview
         Task<(bool Found, int RentalId, int CustomerId, 
             string CustomerName, string FilmTitle, DateOnly RentalDate, DateOnly DueDate, 
@@ -30,6 +26,10 @@ namespace Retro_grupp_g.Repositories
            string CustomerName, string FilmTitle, DateOnly RentalDate,
            DateOnly DueDate, int DaysLate, ushort FeeAmount)> GetLateFeePreviewByRentalIdAsync(int rentalId);
         // LATE post
+        // Returnerar meddelande + status. Sparar endast vid Real = true.
+        Task<(bool Found, bool IsLate, int DaysLate, DateOnly DueDate, 
+            string FilmTitle, ushort FeeAmount, bool IsReal, int? RentalId, 
+            string ActualCustomerName)> ReturnLateRealAsync(int inventoryId, int customerId);
 
 
         //********************** SKADAD RETUR/BORTTAPPAD **********************************************************
