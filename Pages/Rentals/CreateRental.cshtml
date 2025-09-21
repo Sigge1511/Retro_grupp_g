@@ -47,6 +47,7 @@
         <tbody>
             @foreach (var film in Model.Filmer)
             {
+                <tr>
             <td>@film.Title</td>
             <td>@film.Description</td>
             <td>@string.Join(", ", film.Genres)</td>
@@ -88,6 +89,7 @@
                     </form>
                 }
             </td>
+            </tr>
             }
         </tbody>
 
