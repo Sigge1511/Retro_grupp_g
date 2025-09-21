@@ -14,9 +14,14 @@
 
 
 <body>
+
+    <!--Navbar för hela hemsidan, med undantaget att den ej ska synas på startsidan.-->
+
     <header>
-    <nav class="navbar">
-        <div class="navbar-container">
+        @if (!(ViewData["Title"]?.ToString() == "Startsida"))
+        {
+            <nav class="navbar">
+                <div class="navbar-container">
             <a asp-page="/Index" class="mynav-link">Hem</a>
             <a asp-page="/Rent" class="mynav-link">Hyr</a>
             <a asp-page="/Return" class="mynav-link">Åter</a>
@@ -30,6 +35,7 @@
             <a asp-page="/Help" class="mynav-link">Hjälp</a>
         </div>
     </nav>
+    }
     </header>
 
     <div class="page">
