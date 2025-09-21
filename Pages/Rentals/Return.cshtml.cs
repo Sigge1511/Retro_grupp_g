@@ -102,7 +102,7 @@ namespace Retro_grupp_g.Pages.Rentals
                 return Page();
             }
 
-            // Preview baseras på inventory (kund får gärna vara annan ? mock är tillåtet)
+            // Vi anropar denna metod för att hämta info om en ev. sen retur
             var preview = await _rentalRepository.GetLateFeePreviewByInventoryAsync(SelectedInventoryId);
 
             if (!preview.Found)
@@ -119,11 +119,22 @@ namespace Retro_grupp_g.Pages.Rentals
                 return Page();
             }
 
+            // VIKTIGT: Vi omdirigerar nu till Fee-sidan och skickar med RentalId i URL:en
             return RedirectToPage("/Rentals/Fee", new { rentalId = preview.RentalId });
         }
 
         //Task för att ta betalt för skadad film och ropa på RentalRepository
 
+
+
         //****************
+        //Backup metod för att slippa krascha sidan vid POST utan handler
+        public async Task<IActionResult> OnPostAsync()
+        {
+            // Denna metod fångar alla POSTs som inte matchar en specifik handler.
+            // Vi ser till att data fylls på innan sidan renderas om för att undvika NullReferenceException.
+            await OnGetAsync();
+            return Page();
+        }
     }
 }

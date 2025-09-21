@@ -189,9 +189,9 @@ namespace Retro_grupp_g.Repositories
                     rentalDay, due, daysLate, fee);
         }
         //---
-        public async Task<(bool Found, int RentalId, int CustomerId, 
-            string CustomerName, string FilmTitle, DateOnly RentalDate, 
-            DateOnly DueDate, int DaysLate, ushort FeeAmount)>GetLateFeePreviewByRentalIdAsync(int rentalId)
+        public async Task<(bool Found, int RentalId, int CustomerId, int InventoryId, // Lägg till InventoryId här
+            string CustomerName, string FilmTitle, DateOnly RentalDate,
+            DateOnly DueDate, int DaysLate, ushort FeeAmount)> GetLateFeePreviewByRentalIdAsync(int rentalId)
         {
             var rid = (uint)rentalId;
             var row = await _db.Rentals
@@ -204,13 +204,14 @@ namespace Retro_grupp_g.Repositories
                     Duration = r.Inventory.Film.RentalDuration,
                     Title = r.Inventory.Film.Title,
                     r.CustomerId,
+                    r.InventoryId, // <-- Lägg till denna rad
                     FirstName = r.Customer.FirstName,
                     LastName = r.Customer.LastName
                 })
                 .FirstOrDefaultAsync();
 
             if (row is null)
-                return (false, 0, 0, "", "", default, default, 0, 0);
+                return (false, 0, 0, 0, "", "", default, default, 0, 0); // Uppdatera denna rad
 
             var rentDt = row.RentalDate.Kind == DateTimeKind.Unspecified
                 ? DateTime.SpecifyKind(row.RentalDate, DateTimeKind.Utc)
@@ -220,7 +221,7 @@ namespace Retro_grupp_g.Repositories
             var due = rentalDay.AddDays(Convert.ToInt32(row.Duration));
             var (daysLate, fee) = CalcLateFee(rentalDay, Convert.ToInt32(row.Duration));
 
-            return (true, (int)row.RentalId, (int)row.CustomerId,
+            return (true, (int)row.RentalId, (int)row.CustomerId, (int)row.InventoryId,
                     $"{row.FirstName} {row.LastName}", row.Title,
                     rentalDay, due, daysLate, fee);
         }
@@ -286,5 +287,6 @@ namespace Retro_grupp_g.Repositories
                 .Include(r => r.Customer)
                 .FirstOrDefaultAsync(r => r.RentalId == rid && r.ReturnDate == null);
         }
+        
     }
 }

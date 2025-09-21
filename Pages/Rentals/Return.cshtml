@@ -12,7 +12,6 @@
 }
 
 <form method="post" id="returnForm">
-    <!-- Kund -->
     <div class="mb-3">
         <label for="customerSearch" class="form-label">Kund</label>
         <input type="text" class="form-control" list="customersList"
@@ -28,7 +27,6 @@
         <input type="hidden" asp-for="SelectedCustomerId" id="SelectedCustomerId" />
     </div>
 
-    <!-- Film -->
     <div class="mb-3">
         <label for="filmSearch" class="form-label">Film (Inventory)</label>
         <input type="text" class="form-control" list="filmsList"
@@ -44,194 +42,101 @@
         <input type="hidden" asp-for="SelectedInventoryId" id="SelectedInventoryId" />
     </div>
 
-    <!-- Hint -->
     <div id="previewHint" class="alert" style="display:none" role="alert"></div>
 
-    <!-- Knappar -->
-    <button id="btnNormal" class="btn btn-primary me-2" asp-page-handler="ReturnNormal">Registrera retur</button>
-    <button id="btnLate" class="btn btn-warning me-2" asp-page-handler="ReturnLate">Sen retur</button>
-    <button id="btnDamaged" class="btn btn-danger" asp-page-handler="ReturnDamaged">Skadad</button>
+    <button type="submit" id="btnNormal" class="btn btn-primary me-2" asp-page-handler="ReturnNormal">Registrera retur</button>
+    <button type="submit" id="btnLate" class="btn btn-warning me-2" asp-page-handler="ReturnLate">Sen retur</button>
+    <button type="submit" id="btnDamaged" class="btn btn-danger" asp-page-handler="ReturnDamaged">Skadad</button>
 </form>
-
 
 <script>
     (() => {
-      const form       = document.getElementById('returnForm');
-      const custInput  = document.getElementById('customerSearch');
-      const filmInput  = document.getElementById('filmSearch');
-      const custHidden = document.getElementById('SelectedCustomerId');
-      const filmHidden = document.getElementById('SelectedInventoryId');
-      const hint       = document.getElementById('previewHint');
-      const btnN       = document.getElementById('btnNormal');
-      const btnL       = document.getElementById('btnLate');
-      const btnD       = document.getElementById('btnDamaged');
-      const serverMsg  = document.getElementById('serverMsg'); // kan saknas
+        const form = document.getElementById('returnForm');
+        const custInput = document.getElementById('customerSearch');
+        const filmInput = document.getElementById('filmSearch');
+        const custHidden = document.getElementById('SelectedCustomerId');
+        const filmHidden = document.getElementById('SelectedInventoryId');
+        const hint = document.getElementById('previewHint');
+        const btnN = document.getElementById('btnNormal');
+        const btnL = document.getElementById('btnLate');
 
-      // --- util ---
-      function clearServerMsg(){ if (serverMsg) serverMsg.style.display = 'none'; }
-      function setInvalid(inputEl, errorId, on) {
-        const err = document.getElementById(errorId);
-        if (on) { inputEl.classList.add('is-invalid'); if (err) err.style.display = 'block'; }
-        else    { inputEl.classList.remove('is-invalid'); if (err) err.style.display = 'none'; }
-      }
-      function resetHint(){
-        hint.style.display = 'none';
-        hint.className = 'alert';
-        hint.textContent = '';
-        if (btnN) { btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary'); }
-        if (btnL) { btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning'); }
-      }
-
-      // Bygg upp "text -> id"-mapp från datalist
-      function buildMap(listId){
-        const list = document.getElementById(listId);
-        const map = Object.create(null);
-        const values = [];
-        Array.from(list.options).forEach(o => {
-          const key = (o.value || '').trim();
-          const id  = o.dataset?.id || '';
-          if (key && id) { map[key] = id; values.push(key); }
-        });
-        return { map, values };
-      }
-      const custDict = buildMap('customersList');
-      const filmDict = buildMap('filmsList');
-
-      // Matcha exakt (case-sensitive), exakt (case-insensitive) eller UNIK prefix
-      function resolveSmart(dict, text){
-        const val = (text || '').trim();
-        if (!val) return { id: '', normalized: '' };
-
-        // exakt
-        if (dict.map[val]) return { id: dict.map[val], normalized: val };
-
-        // exakt, case-insensitive
-        const low = val.toLowerCase();
-        const exactCi = dict.values.find(v => v.toLowerCase() === low);
-        if (exactCi) return { id: dict.map[exactCi], normalized: exactCi };
-
-        // UNIK prefix
-        const cands = dict.values.filter(v => v.toLowerCase().startsWith(low));
-        if (cands.length === 1) {
-          const hit = cands[0];
-          return { id: dict.map[hit], normalized: hit };
-        }
-
-        return { id: '', normalized: '' };
-      }
-
-      function syncHiddenFromInputs() {
-        const c = resolveSmart(custDict, custInput.value);
-        const f = resolveSmart(filmDict, filmInput.value);
-
-        custHidden.value = c.id || '';
-        filmHidden.value = f.id || '';
-
-        // skriv tillbaka normaliserad text om vi hittade en unik
-        if (c.id && c.normalized) custInput.value = c.normalized;
-        if (f.id && f.normalized) filmInput.value = f.normalized;
-      }
-
-      function validateOrBlock(e){
-        let ok = true;
-        if (!custHidden.value) { setInvalid(custInput, 'customerError', true); ok = false; }
-        if (!filmHidden.value) { setInvalid(filmInput,  'filmError',    true); ok = false; }
-        if (!ok && e) e.preventDefault();
-        return ok;
-      }
-
-      async function refreshPreview(){
-        const customerId  = custHidden.value;
-        const inventoryId = filmHidden.value;
-
-        if (!customerId || !inventoryId){
-          resetHint();
-          return;
-        }
-
-        const url = `?handler=ReturnPreview&customerId=${encodeURIComponent(customerId)}&inventoryId=${encodeURIComponent(inventoryId)}`;
-        try {
-          const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
-          if (!res.ok) throw new Error();
-          const data = await res.json();
-
-          if (!data.found) { resetHint(); return; }
-
-          if (data.isLate) {
-            hint.className = 'alert alert-warning';
-            hint.textContent = 'Försenad ' + data.daysLate + ' dag(ar). Förfallodag: ' + data.dueDate + '.';
-            hint.style.display = 'block';
-            if (btnL) { btnL.classList.remove('btn-warning'); btnL.classList.add('btn-outline-warning'); }
+        function resetHint() {
+            hint.style.display = 'none';
+            hint.className = 'alert';
+            hint.textContent = '';
             if (btnN) { btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary'); }
-          } else {
-            hint.className = 'alert alert-success';
-            hint.textContent = 'I tid. Förfallodag: ' + data.dueDate + '.';
-            hint.style.display = 'block';
-            if (btnN) { btnN.classList.remove('btn-primary'); btnN.classList.add('btn-outline-success'); }
             if (btnL) { btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning'); }
-          }
-        } catch {
-          resetHint();
         }
-      }
 
-      // När man skriver: sätt hidden, rensa serverMsg, uppdatera hint om båda ID finns
-      function handleChange(){
-        syncHiddenFromInputs();
-        clearServerMsg();
-        resetHint();
-        if (custHidden.value && filmHidden.value) refreshPreview();
-      }
+        function buildMap(listId) {
+            const list = document.getElementById(listId);
+            const map = Object.create(null);
+            Array.from(list.options).forEach(o => {
+                const key = (o.value || '').trim();
+                const id = o.dataset?.id || '';
+                if (key && id) map[key] = id;
+            });
+            return map;
+        }
+        const custDict = buildMap('customersList');
+        const filmDict = buildMap('filmsList');
 
-      // --- koppla events ---
-      custInput.addEventListener('input',  handleChange);
-      custInput.addEventListener('change', handleChange);
-      filmInput.addEventListener('input',  handleChange);
-      filmInput.addEventListener('change', handleChange);
+        function syncHiddenFromInputs() {
+            custHidden.value = custDict[custInput.value] || '';
+            filmHidden.value = filmDict[filmInput.value] || '';
+        }
 
-      // Viktigt: fånga knappklick före submit → sätt hidden → validera → skicka via requestSubmit
-      function hookButton(btn){
-        if (!btn) return;
-        btn.addEventListener('click', (e) => {
-          // kör innan default
-          syncHiddenFromInputs();
-          if (!validateOrBlock(e)) return;
+        async function refreshPreview() {
+            syncHiddenFromInputs(); // Se till att ID:n är uppdaterade
 
-          // säkerställ att rätt handler följer med på första klicket
-          if (form.requestSubmit) {
-            e.preventDefault();      // stoppa vanlig submit
-            form.requestSubmit(btn); // trigga submit med just den här knappen
-          } else {
-            // Fallback för äldre browsers: injicera name/value från knappen
-            const nameAttr  = btn.getAttribute('name');   // brukar vara "handler"
-            const valueAttr = btn.getAttribute('value');  // t.ex. "ReturnLate"
-            if (nameAttr && valueAttr) {
-              e.preventDefault();
-              const tmp = document.createElement('input');
-              tmp.type  = 'hidden';
-              tmp.name  = nameAttr;
-              tmp.value = valueAttr;
-              form.appendChild(tmp);
-              form.submit();
+            const customerId = custHidden.value;
+            const inventoryId = filmHidden.value;
+
+            if (!customerId || !inventoryId) {
+                resetHint();
+                return;
             }
-          }
-          clearServerMsg();
-          resetHint();
-        }, { capture: true });
-      }
-      hookButton(btnN);
-      hookButton(btnL);
-      hookButton(btnD);
 
-      // Enter i ett inputfält: samma logik
-      form.addEventListener('submit', (e) => {
-        syncHiddenFromInputs();
-        if (!validateOrBlock(e)) return;
-        clearServerMsg();
+            const url = `?handler=ReturnPreview&customerId=${encodeURIComponent(customerId)}&inventoryId=${encodeURIComponent(inventoryId)}`;
+            try {
+                const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+                if (!data.found) {
+                    resetHint();
+                    return;
+                }
+                const isLate = data.isLate;
+                hint.className = `alert ${isLate ? 'alert-warning' : 'alert-success'}`;
+                hint.textContent = isLate ? `Försenad ${data.daysLate} dag(ar). Förfallodag: ${data.dueDate}.` : `I tid. Förfallodag: ${data.dueDate}.`;
+                hint.style.display = 'block';
+
+                if (btnL) { isLate ? btnL.classList.add('btn-outline-warning') : btnL.classList.remove('btn-outline-warning'); }
+                if (btnN) { !isLate ? btnN.classList.add('btn-outline-success') : btnN.classList.remove('btn-outline-success'); }
+
+            } catch {
+                resetHint();
+            }
+        }
+
+        // Eventlyssnare för att säkerställa att dolda fält uppdateras vid "blur" (när fältet tappat fokus)
+        custInput.addEventListener('focusout', () => {
+            syncHiddenFromInputs();
+            refreshPreview();
+        });
+        filmInput.addEventListener('focusout', () => {
+            syncHiddenFromInputs();
+            refreshPreview();
+        });
+
+        // Eventlyssnare för att köra validering och uppdatera ID:n precis innan formuläret skickas
+        form.addEventListener('submit', (e) => {
+            syncHiddenFromInputs();
+            if (!custHidden.value || !filmHidden.value) {
+                e.preventDefault();
+                alert("Välj en kund och en film från listorna.");
+            }
+        });
+
         resetHint();
-      });
-
-      // Init
-      resetHint();
     })();
 </script>

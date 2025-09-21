@@ -7,61 +7,67 @@ namespace Retro_grupp_g.Pages.Rentals
     public class FeeModel : PageModel
     {
         private readonly IRentalRepository _rentalRepository;
-        public FeeModel(IRentalRepository rentalRepository) => _rentalRepository = rentalRepository;
 
-        [BindProperty(SupportsGet = true)] public int InventoryId { get; set; }
-        [BindProperty(SupportsGet = true)] public int CustomerId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int RentalId { get; set; }
 
-        [BindProperty] public int RentalId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int InventoryId { get; set; }
 
-        public string FilmTitle { get; private set; } = "";
-        public string ActualCustomerName { get; private set; } = "";
-        public DateOnly RentalDate { get; private set; }
-        public DateOnly DueDate { get; private set; }
-        public int DaysLate { get; private set; }
-        public decimal FeeAmount { get; private set; }
-        public bool IsReal { get; private set; }
+        [BindProperty(SupportsGet = true)]
+        public int CustomerId { get; set; }
 
+        // Dina andra publika egenskaper
+        public string FilmTitle { get; set; }
+        public string ActualCustomerName { get; set; }
+        public DateOnly RentalDate { get; set; }
+        public DateOnly DueDate { get; set; }
+        public int DaysLate { get; set; }
+        public decimal FeeAmount { get; set; }
+        public bool IsReal { get; set; }
 
-        // GET LATE
-        public async Task<IActionResult> OnGetFeeAsync()
+        public FeeModel(IRentalRepository rentalRepository)
         {
-            if (InventoryId <= 0 || CustomerId <= 0)
+            _rentalRepository = rentalRepository;
+        }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            if (RentalId <= 0)
             {
                 TempData["Msg"] = "Ogiltig åtkomst till avgiftssidan.";
                 return RedirectToPage("/Rentals/Return");
             }
 
-            var rental = await _rentalRepository.GetOpenRentalByInventoryAsync(InventoryId);
-            if (rental is null)
+            var rentalDetails = await _rentalRepository.GetLateFeePreviewByRentalIdAsync(RentalId);
+
+            if (!rentalDetails.Found)
             {
-                TempData["Msg"] = "Ingen öppen uthyrning hittades för vald film.";
+                TempData["Msg"] = "Ingen uthyrning hittades för angivet ID.";
                 return RedirectToPage("/Rentals/Return");
             }
 
-            FilmTitle = rental.Inventory?.Film?.Title ?? "(okänd)";
-            ActualCustomerName = $"{rental.Customer.FirstName} {rental.Customer.LastName}";
+            // Fyll de publika egenskaperna från repository-metoden
+            FilmTitle = rentalDetails.FilmTitle;
+            ActualCustomerName = rentalDetails.CustomerName;
+            RentalDate = rentalDetails.RentalDate;
+            DueDate = rentalDetails.DueDate;
+            DaysLate = rentalDetails.DaysLate;
+            FeeAmount = (decimal)rentalDetails.FeeAmount;
 
-            var rentDt = rental.RentalDate.Kind == DateTimeKind.Unspecified
-                ? DateTime.SpecifyKind(rental.RentalDate, DateTimeKind.Utc)
-                : rental.RentalDate;
+            // Fyll de nya egenskaperna från resultatet
+            // De behövs för POST-formuläret
+            CustomerId = rentalDetails.CustomerId;
+            InventoryId = rentalDetails.InventoryId;
 
-            RentalDate = DateOnly.FromDateTime(rentDt.ToLocalTime());
-            int duration = Convert.ToInt32(rental.Inventory?.Film?.RentalDuration ?? 0);
-            DueDate = RentalDate.AddDays(duration);
-
-            var today = DateOnly.FromDateTime(DateTime.Now);
-            DaysLate = today > DueDate ? today.DayNumber - DueDate.DayNumber : 0;
-            FeeAmount = DaysLate == 0 ? 0m : (DaysLate <= 3 ? 5m : 15m);
+            // Denna logik ska finnas här, inte i repot
+            IsReal = rentalDetails.CustomerId == CustomerId;
 
             if (DaysLate <= 0)
             {
                 TempData["Msg"] = $"Returen är inte sen. Förfallodag: {DueDate:yyyy-MM-dd}.";
                 return RedirectToPage("/Rentals/Return");
             }
-
-            IsReal = rental.CustomerId == (ushort)CustomerId;
-            RentalId = (int)rental.RentalId;
 
             return Page();
         }

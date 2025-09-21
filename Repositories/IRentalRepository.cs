@@ -26,12 +26,11 @@ namespace Retro_grupp_g.Repositories
         Task<(bool Found, int RentalId, int CustomerId, 
             string CustomerName, string FilmTitle, DateOnly RentalDate, DateOnly DueDate, 
             int DaysLate, ushort FeeAmount)>GetLateFeePreviewByInventoryAsync(int inventoryId);
-        Task<(bool Found, int RentalId, int CustomerId, 
-            string CustomerName, string FilmTitle,
-              DateOnly RentalDate, DateOnly DueDate, 
-            int DaysLate, ushort FeeAmount)>GetLateFeePreviewByRentalIdAsync(int rentalId);
+        Task<(bool Found, int RentalId, int CustomerId, int InventoryId,
+           string CustomerName, string FilmTitle, DateOnly RentalDate,
+           DateOnly DueDate, int DaysLate, ushort FeeAmount)> GetLateFeePreviewByRentalIdAsync(int rentalId);
         // LATE post
-        
+
 
         //********************** SKADAD RETUR/BORTTAPPAD **********************************************************
         Task ReturnDamagedAsync(int rentalId);
