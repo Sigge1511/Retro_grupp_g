@@ -23,13 +23,14 @@
             <nav class="navbar">
                 <div class="navbar-container">
             <a asp-page="/Index" class="mynav-link">Hem</a>
-            <a asp-page="/Rent" class="mynav-link">Hyr</a>
-            <a asp-page="/Return" class="mynav-link">Åter</a>
-            <a asp-page="/Search" class="mynav-link">Sök</a>
+            <a asp-page="/Rentals/CreateRental" class="mynav-link">Hyr</a> <!-- Länkar om till Isabelles sidor -->
+            <a asp-page="/Rentals/Return" class="mynav-link">Åter</a>
+            <a asp-page="/Rentals/FindFilmToRent" class="mynav-link">Sök film</a> <!-- Länkar om till Isabelles sidor -->
             <a asp-page="/Customer" class="mynav-link">Kund</a>
-            <a asp-page="/Film" class="mynav-link">Film</a>
-            <a asp-page="/Fee" class="mynav-link">Avgift</a>
-            <a asp-page="/Inspo" class="mynav-link">Inspo</a>
+            <a asp-page="/Films/Index" class="mynav-link">Alla filmer</a> <!-- Länkar om till indexsida för films? -->
+@*             <a asp-page="/Rentals/Fee" class="mynav-link">Avgift</a> 
+                Kommenterar ut då avgift för sen eller skadad film nås via Return
+ *@         <a asp-page="/Inspo" class="mynav-link">Inspo</a>
             <a asp-page="/Reports" class="mynav-link">Rapporter</a>
             <a asp-page="/Settings" class="mynav-link">Inställningar</a>
             <a asp-page="/Help" class="mynav-link">Hjälp</a>
