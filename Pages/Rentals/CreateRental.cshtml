@@ -6,6 +6,21 @@
 }
 <h1>Hyra Film</h1>
 
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-message">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <p style="color: green;">@TempData["Success"]</p>
+}
+
 <form method="get">
 	<div>
 		<label for="SearchTitle">Filmtitel</label>
