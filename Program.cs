@@ -49,6 +49,14 @@ namespace Retro_grupp_g
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IRentalRepository, RentalRepository>();
 
+            //Session för "inlogg" av personal
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             var app = builder.Build();
 
             // --- Middleware ---
@@ -66,6 +74,8 @@ namespace Retro_grupp_g
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseAuthorization();
 
