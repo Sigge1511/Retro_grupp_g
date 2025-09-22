@@ -9,18 +9,33 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />  <!-- FLYTTAD NED HIT -->
 
 </head>
+
 <body>
-    <header class="navbar">
-        <nav class="navbar-container">
-            <a asp-page="/Index" class="navbar-logo" style="margin-right: 3rem">Retro Grupp G</a>            
-            <a asp-page="/Index" class="mynav-link">Startsida</a>
-            <a asp-page="/Films/Index" class="mynav-link">Filmer</a>
-            <a asp-page="/Actors/Index" class="mynav-link">Skådespelare</a>
-            <a asp-page="/Categories/Index" class="mynav-link">Kategorier</a>
-            <a asp-page="/Testing/testdesign" class="mynav-link">Designtest</a>
-            <a asp-page="/Logout" class="mynav-link">Logga Ut</a>
-        </nav>
+    <!--Navbar för hela hemsidan, med undantaget att den ej ska synas på startsidan.-->
+
+    <header>
+        @if (!(ViewData["Title"]?.ToString() == "Startsida"))
+        {
+            <nav class="navbar">
+                <div class="navbar-container">
+            <a asp-page="/Index" class="mynav-link">Hem</a>
+            <a asp-page="/Rentals/CreateRental" class="mynav-link">Hyr</a> <!-- Länkar om till Isabelles sidor -->
+            <a asp-page="/Rentals/Return" class="mynav-link">Åter</a>
+            <a asp-page="/Rentals/FindFilmToRent" class="mynav-link">Sök film</a> <!-- Länkar om till Isabelles sidor -->
+            <a asp-page="/Customer" class="mynav-link">Kund</a>
+            <a asp-page="/Films/Index" class="mynav-link">Alla filmer</a> <!-- Länkar om till indexsida för films? -->
+@*             <a asp-page="/Rentals/Fee" class="mynav-link">Avgift</a> 
+                Kommenterar ut då avgift för sen eller skadad film nås via Return
+ *@         <a asp-page="/Inspo" class="mynav-link">Inspo</a>
+            <a asp-page="/Reports" class="mynav-link">Rapporter</a>
+            <a asp-page="/Settings" class="mynav-link">Inställningar</a>
+            <a asp-page="/Help" class="mynav-link">Hjälp</a>
+            <a asp-page="/Logout" class="mynav-link">Logga Ut</a> <!-- amandas länk för log out -->
+        </div>
+    </nav>
+    }
     </header>
+
     <div class="page">
         <main role="main" class="pb-3">
             @RenderBody()

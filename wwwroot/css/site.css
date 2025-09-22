@@ -32,27 +32,8 @@
 /****************************************************BODY****************************************************/
 
 
-/****************************************************NAVBAR****************************************************/
 
-.navbar {
-    background-color: #2a5a79;
-    border-bottom: 50px;
-    border-color: antiquewhite;
-}
-.navbar-container {
-    display: flex;
-}
-.mynav-link {
-    font-family: 'Visby Regular';
-    font-weight: 700;
-    color: #fff1c2;
-    font-size: 1.3rem;
-    margin-left: 40px;
-    text-decoration: none; /* tar bort understrykning */
-}
-.mynav-link:hover {
-    color: #ffd994;
-}
+
 /****************************************************LÄNKAR****************************************************/
 
 .small-link {
@@ -335,3 +316,37 @@ head {
 .film-table td {
     border-bottom: 1px solid #eee;
 }
+
+
+
+/*Ny navbar*/
+
+.navbar {
+    background-color: #2a5a79;
+    display: flex;
+    justify-content: center !important; /* centrera radens innehåll */
+    border-bottom: 2px solid antiquewhite; /* giltig border */
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: center; /* centrera länkarna */
+    gap: 20px;
+    max-width: 820px; 
+    margin: 0 auto; /* centrera ramen */
+    padding: 10px 16px; 
+}
+
+.mynav-link {
+    font-family: 'Visby Regular';
+    font-weight: 700;
+    color: #fff1c2;
+    font-size: 1.3rem;
+    margin: 0; /* viktigt: inga auto-/vänstermarginaler */
+    padding: 0 12px;
+    text-decoration: none;
+      
+}
+    .mynav-link:hover {
+        color: #ffd994;
+    }
