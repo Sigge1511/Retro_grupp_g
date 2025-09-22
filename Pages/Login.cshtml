@@ -1,0 +1,17 @@
+﻿@page
+@model Retro_grupp_g.Pages.LoginModel
+@{
+    <h2>Logga in</h2>
+
+    <form method="post">
+    <div>
+        <label>Personal:</label>
+        <select asp-for="SelectedStaffId" asp-items="Model.StaffList"></select>
+    </div>
+    <div>
+        <label>Butik:</label>
+        <select asp-for="SelectedStoreId" asp-items="Model.StoreList"></select>
+    </div>
+    <button type="submit">Logga in</button>
+    </form>
+}
