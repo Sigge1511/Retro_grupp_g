@@ -122,7 +122,7 @@ namespace Retro_grupp_g.Repositories
             return (true, row.FilmTitle, rentalDay, dueDay, isLate, daysLate, duration,
                     row.ActualCustomerId, actualName, matches);
         }
-    //**************     RETURER POST ***************
+    // RETURER NORMAL POST ***************
         public async Task<(bool Ok, string Message)> ReturnNormalRealAsync(int inventoryId, int customerId)
         {
             var inv = (uint)inventoryId;
@@ -142,9 +142,6 @@ namespace Retro_grupp_g.Repositories
 
             return (true, "Retur registrerad.");
         }
-
-
-
 
 //********************** SENA RETURER **********************************************************
         private static (int daysLate, ushort fee) CalcLateFee(DateOnly rentalDay, int rentalDurationDays)
@@ -296,7 +293,11 @@ namespace Retro_grupp_g.Repositories
             return (true, isLate, daysLate, due, result.FilmTitle, fee, isReal, (int)result.Rental.RentalId, $"{result.ActualCustomerFirstName} {result.ActualCustomerLastName}");
         }
 
-        //********************** SKADAD RETUR/BORTTAPPAD **********************************************************
+//********************** SKADAD RETUR/BORTTAPPAD **********************************************************
+        //GET
+
+        
+        //POST
         public Task ReturnDamagedAsync(int rentalId) => Task.CompletedTask;
 
 
