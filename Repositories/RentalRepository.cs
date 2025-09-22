@@ -11,11 +11,11 @@ namespace Retro_grupp_g.Repositories
 
         public Task<List<Rental>> GetOpenRentalsByCustomerAsync(int customerId) =>
             _db.Rentals
-               .AsNoTracking()
-               .Include(r => r.Inventory)
-               .Where(r => r.CustomerId == (ushort)customerId && r.ReturnDate == null)
-               .OrderByDescending(r => r.RentalDate)
-               .ToListAsync();
+            .Include(r => r.Inventory)
+            .ThenInclude(i => i.Film)
+            .Where(r => r.CustomerId == customerId && r.ReturnDate == null)
+            .OrderByDescending(r => r.RentalDate)
+            .ToListAsync();
 
         public async Task<bool> RentAsync(int customerId, int filmId, int? staffId = null)
         {
@@ -39,6 +39,7 @@ namespace Retro_grupp_g.Repositories
                 RentalDate = DateTime.UtcNow,
                 ReturnDate = null
             };
+
 
             await _db.Rentals.AddAsync(rental);
             await _db.SaveChangesAsync();

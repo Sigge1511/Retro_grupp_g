@@ -28,8 +28,6 @@ public partial class Rental
 
     public virtual Staff Staff { get; set; } = null!;
     
-    
-    // Central prop kvar – men DERIVERAD från Inventory (ingen egen DB-kolumn behövs)
-    [NotMapped]
+    [NotMapped] //Lägger den som notmapped då det inte finns någon kolumn i tabellen
     public int FilmId { get; internal set; }
 }
