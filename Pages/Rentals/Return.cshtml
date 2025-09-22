@@ -1,0 +1,142 @@
+﻿@page
+@model Retro_grupp_g.Pages.Rentals.ReturnModel
+@{
+    var films = (List<(int InventoryId, int FilmId, string Title)>)ViewData["Films"];
+    var customers = (List<(int CustomerId, string FullName, string Email)>)ViewData["Customers"];
+}
+
+<h2>Returnera film</h2>
+@if (TempData["Msg"] is string msg)
+{
+    <div id="serverMsg" class="alert alert-info">@msg</div>
+}
+
+<form method="post" id="returnForm">
+    <div class="mb-3">
+        <label for="customerSearch" class="form-label">Kund</label>
+        <input type="text" class="form-control" list="customersList"
+               id="customerSearch" placeholder="Skriv kundnamn eller e-post..." autocomplete="off" />
+        <div class="invalid-feedback" id="customerError">Välj en kund från listan.</div>
+
+        <datalist id="customersList">
+            @foreach (var c in customers)
+            {
+                <option value="@c.FullName (@c.Email)" data-id="@c.CustomerId"></option>
+            }
+        </datalist>
+        <input type="hidden" asp-for="SelectedCustomerId" id="SelectedCustomerId" />
+    </div>
+
+    <div class="mb-3">
+        <label for="filmSearch" class="form-label">Film (Inventory)</label>
+        <input type="text" class="form-control" list="filmsList"
+               id="filmSearch" placeholder="Skriv titel..." autocomplete="off" />
+        <div class="invalid-feedback" id="filmError">Välj en film från listan.</div>
+
+        <datalist id="filmsList">
+            @foreach (var f in films)
+            {
+                <option value="@f.Title (InvId: @f.InventoryId)" data-id="@f.InventoryId"></option>
+            }
+        </datalist>
+        <input type="hidden" asp-for="SelectedInventoryId" id="SelectedInventoryId" />
+    </div>
+
+    <div id="previewHint" class="alert" style="display:none" role="alert"></div>
+
+    <button type="submit" id="btnNormal" class="btn btn-primary me-2" asp-page-handler="ReturnNormal">Registrera retur</button>
+    <button type="submit" id="btnLate" class="btn btn-warning me-2" asp-page-handler="ReturnLate">Sen retur</button>
+    <button type="submit" id="btnDamaged" class="btn btn-danger" asp-page-handler="ReturnDamaged">Skadad</button>
+</form>
+
+<script>
+    (() => {
+        const form = document.getElementById('returnForm');
+        const custInput = document.getElementById('customerSearch');
+        const filmInput = document.getElementById('filmSearch');
+        const custHidden = document.getElementById('SelectedCustomerId');
+        const filmHidden = document.getElementById('SelectedInventoryId');
+        const hint = document.getElementById('previewHint');
+        const btnN = document.getElementById('btnNormal');
+        const btnL = document.getElementById('btnLate');
+
+        function resetHint() {
+            hint.style.display = 'none';
+            hint.className = 'alert';
+            hint.textContent = '';
+            if (btnN) { btnN.classList.remove('btn-outline-success'); btnN.classList.add('btn-primary'); }
+            if (btnL) { btnL.classList.remove('btn-outline-warning'); btnL.classList.add('btn-warning'); }
+        }
+
+        function buildMap(listId) {
+            const list = document.getElementById(listId);
+            const map = Object.create(null);
+            Array.from(list.options).forEach(o => {
+                const key = (o.value || '').trim();
+                const id = o.dataset?.id || '';
+                if (key && id) map[key] = id;
+            });
+            return map;
+        }
+        const custDict = buildMap('customersList');
+        const filmDict = buildMap('filmsList');
+
+        function syncHiddenFromInputs() {
+            custHidden.value = custDict[custInput.value] || '';
+            filmHidden.value = filmDict[filmInput.value] || '';
+        }
+
+        async function refreshPreview() {
+            syncHiddenFromInputs(); // Se till att ID:n är uppdaterade
+
+            const customerId = custHidden.value;
+            const inventoryId = filmHidden.value;
+
+            if (!customerId || !inventoryId) {
+                resetHint();
+                return;
+            }
+
+            const url = `?handler=ReturnPreview&customerId=${encodeURIComponent(customerId)}&inventoryId=${encodeURIComponent(inventoryId)}`;
+            try {
+                const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+                if (!data.found) {
+                    resetHint();
+                    return;
+                }
+                const isLate = data.isLate;
+                hint.className = `alert ${isLate ? 'alert-warning' : 'alert-success'}`;
+                hint.textContent = isLate ? `Försenad ${data.daysLate} dag(ar). Förfallodag: ${data.dueDate}.` : `I tid. Förfallodag: ${data.dueDate}.`;
+                hint.style.display = 'block';
+
+                if (btnL) { isLate ? btnL.classList.add('btn-outline-warning') : btnL.classList.remove('btn-outline-warning'); }
+                if (btnN) { !isLate ? btnN.classList.add('btn-outline-success') : btnN.classList.remove('btn-outline-success'); }
+
+            } catch {
+                resetHint();
+            }
+        }
+
+        // Eventlyssnare för att säkerställa att dolda fält uppdateras vid "blur" (när fältet tappat fokus)
+        custInput.addEventListener('focusout', () => {
+            syncHiddenFromInputs();
+            refreshPreview();
+        });
+        filmInput.addEventListener('focusout', () => {
+            syncHiddenFromInputs();
+            refreshPreview();
+        });
+
+        // Eventlyssnare för att köra validering och uppdatera ID:n precis innan formuläret skickas
+        form.addEventListener('submit', (e) => {
+            syncHiddenFromInputs();
+            if (!custHidden.value || !filmHidden.value) {
+                e.preventDefault();
+                alert("Välj en kund och en film från listorna.");
+            }
+        });
+
+        resetHint();
+    })();
+</script>

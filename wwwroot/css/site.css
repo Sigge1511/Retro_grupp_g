@@ -140,6 +140,15 @@ p {
 .btn-secondary:hover {
     background-color: #5a1c01;
 }
+.btn-warning {
+    background-color: #ffd994;
+    font-size: 2rem;
+    color: black;
+}
+btn-danger {
+    background-color: #dc3c22;
+    font-size: 2rem;
+}
 /****************************************************FORMULÄR &co****************************************************/
 .form-control {
     font-size: 1.2rem; /* öka textstorleken */
