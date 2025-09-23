@@ -1,0 +1,41 @@
+﻿@page
+@model Retro_grupp_g.Pages.Addresses.IndexModel
+@{
+    ViewData["Title"] = "Adresser";
+}
+
+<h1>Adresser</h1>
+
+<p>
+    <a class="btn btn-primary" asp-page="Create">Ny adress</a>
+    <a class="btn btn-secondary" asp-page="/Customers/Index">Till kunder</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Adress</th>
+            <th>Postnr</th>
+            <th>Stad</th>
+            <th>Land</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model.Addresses)
+        {
+            <tr>
+                <td>@a.AddressId</td>
+                <td>@a.Address1 @(!string.IsNullOrWhiteSpace(a.Address2) ? $" / {a.Address2}" : "")</td>
+                <td>@a.PostalCode</td>
+                <td>@a.City?.City1</td>
+                <td>@a.City?.Country?.Country1</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" asp-page="Edit" asp-route-id="@a.AddressId">Redigera</a>
+                    <a class="btn btn-sm btn-outline-danger" asp-page="Delete" asp-route-id="@a.AddressId">Ta bort</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

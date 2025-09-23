@@ -7,7 +7,7 @@ using Retro_grupp_g.Models;
 using Retro_grupp_g.Repositories;
 using AddressModel = Retro_grupp_g.Models.Address; 
 
-namespace Retro_grupp_g.Pages.Address
+namespace Retro_grupp_g.Pages.Addresses
 {
     public class CreateModel : PageModel
     {

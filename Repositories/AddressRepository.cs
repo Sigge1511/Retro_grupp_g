@@ -38,5 +38,21 @@ namespace Retro_grupp_g.Repositories
             );
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            var a = await _db.Addresses.FindAsync(id);
+            if (a != null) _db.Addresses.Remove(a);
+        }
+
+        public Task<bool> CanDeleteAsync(int id)
+        {
+            return Task.FromResult(
+                !_db.Customers.Any(c => c.AddressId == id) &&
+                !_db.Staff.Any(s => s.AddressId == id) &&
+                !_db.Stores.Any(st => st.AddressId == id)
+            );
+        }
+
+
     }
 }

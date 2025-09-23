@@ -5,7 +5,7 @@ using Retro_grupp_g.Models;
 using Retro_grupp_g.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Retro_grupp_g.Pages.Address
+namespace Retro_grupp_g.Pages.Addresses
 {
     public class EditModel : PageModel
     {
