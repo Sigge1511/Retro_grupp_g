@@ -123,7 +123,7 @@ namespace Retro_grupp_g.Repositories
             return (true, row.FilmTitle, rentalDay, dueDay, isLate, daysLate, duration,
                     row.ActualCustomerId, actualName, matches);
         }
-    // RETURER NORMAL POST ***************
+        // NORMAL POST ***************
         public async Task<(bool Ok, string Message)> ReturnNormalRealAsync(int inventoryId, int customerId)
         {
             var inv = (uint)inventoryId;
@@ -145,6 +145,7 @@ namespace Retro_grupp_g.Repositories
         }
 
 //********************** SENA RETURER **********************************************************
+        //GET LATE
         private static (int daysLate, ushort fee) CalcLateFee(DateOnly rentalDay, int rentalDurationDays)
         {
             var due = rentalDay.AddDays(rentalDurationDays);
@@ -155,8 +156,8 @@ namespace Retro_grupp_g.Repositories
         }
         //---
         public async Task<(bool Found, int RentalId, int CustomerId, string CustomerName, 
-            string FilmTitle, DateOnly RentalDate, DateOnly DueDate, 
-            int DaysLate, ushort FeeAmount)>GetLateFeePreviewByInventoryAsync(int inventoryId)
+                        string FilmTitle, DateOnly RentalDate, DateOnly DueDate, 
+                        int DaysLate, ushort FeeAmount)>GetLateFeePreviewByInventoryAsync(int inventoryId)
         {
             var inv = (uint)inventoryId;
             var row = await _db.Rentals
@@ -191,8 +192,8 @@ namespace Retro_grupp_g.Repositories
         }
         //---
         public async Task<(bool Found, int RentalId, int CustomerId, int InventoryId, // Lägg till InventoryId här
-            string CustomerName, string FilmTitle, DateOnly RentalDate,
-            DateOnly DueDate, int DaysLate, ushort FeeAmount)> GetLateFeePreviewByRentalIdAsync(int rentalId)
+                        string CustomerName, string FilmTitle, DateOnly RentalDate,
+                        DateOnly DueDate, int DaysLate, ushort FeeAmount)> GetLateFeePreviewByRentalIdAsync(int rentalId)
         {
             var rid = (uint)rentalId;
             var row = await _db.Rentals
@@ -226,11 +227,8 @@ namespace Retro_grupp_g.Repositories
                     $"{row.FirstName} {row.LastName}", row.Title,
                     rentalDay, due, daysLate, fee);
         }
-
-        //--- Bekräfta “sen retur”: markera retur + skapa payment
-        public async Task<(bool Found, bool IsLate, int DaysLate, DateOnly DueDate,
-    string FilmTitle, ushort FeeAmount, bool IsReal, int? RentalId,
-    string ActualCustomerName)> ReturnLateRealAsync(int inventoryId, int customerId)
+        //POST LATE
+        public async Task<bool> ReturnLateRealAsync(int inventoryId, int customerId, int staffId, int storeId)
         {
             var inv = (uint)inventoryId;
             var cid = (ushort)customerId;
@@ -249,55 +247,48 @@ namespace Retro_grupp_g.Repositories
                 })
                 .FirstOrDefaultAsync();
 
-            if (result is null)
-                return (false, false, 0, default, "", 0, false, null, "");
+            if (result is null) return false;
 
-            // Now, let's process the data we fetched.
             var rentalDay = DateOnly.FromDateTime(result.Rental.RentalDate.ToLocalTime());
             var duration = Convert.ToInt32(result.RentalDuration);
             var due = rentalDay.AddDays(duration);
             var (daysLate, fee) = CalcLateFee(rentalDay, duration);
 
             var isLate = daysLate > 0;
-            var isReal = result.ActualCustomerId == cid;
-
-            // If it's a "real" return, update the database.
-            if (isReal)
-            {
-                // First, get the tracking entity to update.
-                var rentalToUpdate = await _db.Rentals
+            // Vi måste göra en ny databasfråga som spåras för att kunna spara ändringarna.
+            var rentalToUpdate = await _db.Rentals    
                     .Where(r => r.RentalId == result.Rental.RentalId)
                     .FirstOrDefaultAsync();
 
-                if (rentalToUpdate is not null)
+            if (rentalToUpdate is not null)
+            {
+                rentalToUpdate.ReturnDate = DateTime.UtcNow;
+                rentalToUpdate.LastUpdate = DateTime.UtcNow;
+
+                if (fee > 0)
                 {
-                    rentalToUpdate.ReturnDate = DateTime.UtcNow;
-                    rentalToUpdate.LastUpdate = DateTime.UtcNow;
-
-                    if (fee > 0)
+                    var payment = new Payment
                     {
-                        var payment = new Payment
-                        {
-                            CustomerId = rentalToUpdate.CustomerId,
-                            StaffId = rentalToUpdate.StaffId,
-                            RentalId = rentalToUpdate.RentalId,
-                            Amount = fee,
-                            PaymentDate = DateTime.UtcNow
-                        };
+                        CustomerId = rentalToUpdate.CustomerId,
+                        StaffId = (byte)(ushort)staffId,
+                        RentalId = rentalToUpdate.RentalId,
+                        Amount = fee,
+                        PaymentDate = DateTime.UtcNow
+                    };
                         await _db.Payments.AddAsync(payment);
-                    }
-                    await _db.SaveChangesAsync();
                 }
+                await _db.SaveChangesAsync();
+                return true;
             }
-
-            // Return the result
-            return (true, isLate, daysLate, due, result.FilmTitle, fee, isReal, (int)result.Rental.RentalId, $"{result.ActualCustomerFirstName} {result.ActualCustomerLastName}");
+            return false;
         }
+
+        
 
 //********************** SKADAD RETUR/BORTTAPPAD **********************************************************
         //GET
 
-        
+
         //POST
         public Task ReturnDamagedAsync(int rentalId) => Task.CompletedTask;
 
