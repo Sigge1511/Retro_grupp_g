@@ -9,6 +9,7 @@ namespace Retro_grupp_g.Repositories
         Task AddAsync(Address address);
         Task UpdateAsync(Address address);
         Task SaveAsync();
-        Task<bool> ExistsAsync(string address, string postalCode, string city, string district);
+        Task<bool> ExistsAsync(string address1, int cityId, string? postalCode, string? district);
     }
 }
+

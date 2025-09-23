@@ -1,0 +1,46 @@
+﻿@page
+@model Retro_grupp_g.Pages.Address.EditModel
+@{
+}
+
+<h1>Redigera adress</h1>
+
+<form method="post">
+    <input type="hidden" asp-for="Address.AddressId" />
+
+    <div class="form-group">
+        <label asp-for="Address.Address1"></label>
+        <input asp-for="Address.Address1" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address.Address2"></label>
+        <input asp-for="Address.Address2" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address.District"></label>
+        <input asp-for="Address.District" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address.CityId">Stad</label>
+        <select asp-for="Address.CityId" class="form-control"
+                asp-items="@(new SelectList(Model.Cities, "CityId", "City1"))">
+            <option value="">-- Välj stad --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address.PostalCode"></label>
+        <input asp-for="Address.PostalCode" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address.Phone"></label>
+        <input asp-for="Address.Phone" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Spara</button>
+    <a asp-page="/Customers/Index" class="btn btn-secondary">Avbryt</a>
+</form>

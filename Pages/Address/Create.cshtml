@@ -1,0 +1,52 @@
+﻿@page
+@model Retro_grupp_g.Pages.Address.CreateModel
+@{
+}
+
+<h1>Ny adress</h1>
+
+<!-- Visar ev. valideringsfel i en lista -->
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<form method="post">
+    <div class="form-group mb-2">
+        <label class="form-label">Adress</label>
+        <input asp-for="Address.Address1" class="form-control" />
+        <span asp-validation-for="Address.Address1" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label class="form-label">Adress 2 (valfritt)</label>
+        <input asp-for="Address.Address2" class="form-control" />
+        <span asp-validation-for="Address.Address2" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label class="form-label">Stadsdel</label>
+        <input asp-for="Address.District" class="form-control" />
+        <span asp-validation-for="Address.District" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label class="form-label">Stad</label>
+        <select asp-for="Address.CityId" class="form-control" asp-items="Model.Cities">
+            <option value="">-- Välj stad --</option>
+        </select>
+        <span asp-validation-for="Address.CityId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label class="form-label">Postnummer</label>
+        <input asp-for="Address.PostalCode" class="form-control" />
+        <span asp-validation-for="Address.PostalCode" class="text-danger"></span>
+    </div>
+
+@*     <div class="form-group mb-3">
+        <label class="form-label">Telefon</label>
+        <input asp-for="Address.Phone" class="form-control" />
+        <span asp-validation-for="Address.Phone" class="text-danger"></span>
+    </div> *@
+
+    <button type="submit" class="btn btn-primary">Spara</button>
+    <a asp-page="/Customers/Create" class="btn btn-secondary">Tillbaka</a>
+</form>
