@@ -136,9 +136,8 @@ namespace Retro_grupp_g.Pages.Rentals
                 }
             }
 
-            // Vi anropar nu OnGetAsync för att hämta all information igen.
-            // Detta garanterar att all data visas korrekt efter en POST-åtgärd.
-            return RedirectToPage("/Rentals/Fee", new { RentalId = RentalId, CustomerId = CustomerId, InventoryId = InventoryId });
+
+            return RedirectToPage("/Rentals/Fee", new { RentalId = RentalId });
         }
     }
 }
