@@ -77,7 +77,7 @@ namespace Retro_grupp_g.Pages.Rentals
         public async Task<IActionResult> OnPostReturnLateAsync()
         {
             // Steg 1: Grundläggande validering och hämtning av session-ID.
-            if (RentalId <= 0 || InventoryId <= 0 || CustomerId <= 0)
+            if (InventoryId <= 0 || CustomerId <= 0)
             {
                 TempData["Msg"] = "Ogiltiga data vid bekräftelse.";
                 return Page();
@@ -102,16 +102,37 @@ namespace Retro_grupp_g.Pages.Rentals
             }
             else
             {
-                // Steg 3: Om det är en skarp retur, utför databasoperationen och sätt TempData["Msg"].
+                // För en skarp retur, hämta färsk data från databasen.
+                var rentalDetails = await _rentalRepository.GetLateFeePreviewByRentalIdAsync(RentalId);
+
+                if (!rentalDetails.Found)
+                {
+                    TempData["Msg"] = "Uthyrningen hittades inte.";
+                    return Page();
+                }
+
+                // Fyll model-egenskaperna med färsk data för att sidan ska kunna renderas korrekt.
+                FilmTitle = rentalDetails.FilmTitle;
+                ActualCustomerName = rentalDetails.CustomerName;
+                RentalDate = rentalDetails.RentalDate;
+                DueDate = rentalDetails.DueDate;
+                DaysLate = rentalDetails.DaysLate;
+                FeeAmount = (decimal)rentalDetails.FeeAmount;
+                this.CustomerId = rentalDetails.CustomerId;
+                this.InventoryId = rentalDetails.InventoryId;
+
                 var success = await _rentalRepository.ReturnLateRealAsync(InventoryId, CustomerId, staffId.Value, storeId.Value);
 
                 if (success)
                 {
                     TempData["Msg"] = $"Sen retur registrerad. Avgift: ${FeeAmount:0.00}.";
+                    // Omdirigera till samma sida för att rensa post-anropet.
+                    return RedirectToPage("/Rentals/Fee", new { RentalId = RentalId, CustomerId = CustomerId, InventoryId = InventoryId });
                 }
                 else
                 {
                     TempData["Msg"] = "Ett fel uppstod vid registrering av returen.";
+                    return Page();
                 }
             }
 
