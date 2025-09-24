@@ -35,7 +35,7 @@ namespace Retro_grupp_g.Pages.Customers
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // Undvik implicit [Required] på nav-props vid post
+          
             ModelState.Remove("Customer.Store");
             ModelState.Remove("Customer.Address");
             ModelState.Remove("Customer.Payments");
@@ -44,7 +44,7 @@ namespace Retro_grupp_g.Pages.Customers
             if (!ModelState.IsValid)
             {
                 await LoadDropdowns();
-                // Visa första felet i UI (lägg gärna <div asp-validation-summary="ModelOnly"> i vyn)
+
                 TempData["Error"] = FirstModelError(ModelState);
                 return Page();
             }

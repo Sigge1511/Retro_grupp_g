@@ -37,15 +37,6 @@ namespace Retro_grupp_g.Repositories
             _db.Customers.Update(customer);
             return Task.CompletedTask;
         }
-        //public async Task<Customer?> GetDetailsAsync(int id)
-        //{
-        //    return await _db.Customers
-        //        .Include(c => c.Rentals)
-        //        .ThenInclude(r => r.Inventory)
-        //        .ThenInclude(i => i.Film)
-        //        .FirstOrDefaultAsync(c => c.CustomerId == id);
-        //}
-
         public async Task<Customer?> GetDetailsAsync(int id)
         {
             return await _db.Customers
