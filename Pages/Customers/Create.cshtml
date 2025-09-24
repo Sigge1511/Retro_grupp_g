@@ -3,6 +3,19 @@
 @{
 }
 
+
+@if (TempData["Error"] is string err)
+{
+    <div class="alert alert-danger">@err</div>
+}
+@if (TempData["Message"] is string msg)
+{
+    <div class="alert alert-success">@msg</div>
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
 <h1>Ny kund</h1>
 
 <form method="post">
@@ -21,7 +34,7 @@
         <span asp-validation-for="Customer.AddressId" class="text-danger"></span>
     </div>
     <p>
-        <a asp-page="/Addresses/Create" class="btn btn-link">
+        <a asp-page="/Addresses/Create" asp-route-returnUrl="/Customers/Create" class="btn btn-link">
             Lägg till ny adress
         </a>
     </p>

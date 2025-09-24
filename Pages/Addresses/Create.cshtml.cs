@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
 using Retro_grupp_g.Models;
 using Retro_grupp_g.Repositories;
-using AddressModel = Retro_grupp_g.Models.Address; 
+using AddressModel = Retro_grupp_g.Models.Address;
 
 namespace Retro_grupp_g.Pages.Addresses
 {
     public class CreateModel : PageModel
     {
         private readonly IAddressRepository _repo;
-        private readonly SakilaDbContext _db;  
+        private readonly SakilaDbContext _db;
 
         public CreateModel(IAddressRepository repo, SakilaDbContext db)
         {
@@ -22,6 +22,9 @@ namespace Retro_grupp_g.Pages.Addresses
 
         [BindProperty]
         public AddressModel Address { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
+        public string? ReturnUrl { get; set; }
 
         public IEnumerable<SelectListItem> Cities { get; private set; }
             = Enumerable.Empty<SelectListItem>();
@@ -33,8 +36,23 @@ namespace Retro_grupp_g.Pages.Addresses
 
         public async Task<IActionResult> OnPostAsync()
         {
+            ModelState.Remove("Address.City");
+
+            ModelState.Remove("Address.Address2");
+            ModelState.Remove("Address.PostalCode");
+
             if (!ModelState.IsValid)
             {
+                await LoadDropdownsAsync();
+                return Page();
+            }
+
+            if (string.IsNullOrWhiteSpace(Address.Address1) ||
+                string.IsNullOrWhiteSpace(Address.District) ||
+                Address.CityId == 0 ||
+                string.IsNullOrWhiteSpace(Address.Phone))
+            {
+                ModelState.AddModelError(string.Empty, "Fyll i alla obligatoriska fält.");
                 await LoadDropdownsAsync();
                 return Page();
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 
 namespace Retro_grupp_g.Models;
@@ -23,11 +24,11 @@ public partial class Customer
 
     public DateTime? LastUpdate { get; set; }
 
-    public virtual Address Address { get; set; } = null!;
+    [ValidateNever] public virtual Address Address { get; set; } = null!;
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
     public virtual ICollection<Rental> Rentals { get; set; } = new List<Rental>();
 
-    public virtual Store Store { get; set; } = null!;
+    [ValidateNever] public virtual Store Store { get; set; } = null!;
 }
