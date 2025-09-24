@@ -7,6 +7,14 @@
 
 <p><a class="btn btn-primary" asp-page="Create">Ny kund</a></p>
 
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Sök förnamn, efternamn eller e-post..." />
+        <button type="submit" class="btn btn-outline-secondary">Sök</button>
+    </div>
+</form>
+
+
 <table class="table">
     <thead>
         <tr>
