@@ -4,4 +4,36 @@
     ViewData["Title"] = "Topplistor";
 }
 
-<h2>Mest uthyrda filmer i respektive genre</h2>
+<h1>Mest uthyrda filmer</h1>
+@foreach (var category in Model.StaticTopLists)
+{
+    <section style="margin-bottom: 2rem;">
+        <h3>@category.CategoryName</h3>
+        <ol>
+            @foreach (var film in category.TopFilms)
+            {
+                <li>@film.Title</li>
+            }
+        </ol>
+    </section>
+}
+
+<h2>Visa från ytterligare genre</h2>
+<form method="get">
+    <label for="category">Välj kategori:</label>
+    <select asp-for="SelectedCategoryId" asp-items="Model.OtherCategories"></select>
+    <button type="submit">Visa</button>
+</form>
+
+@if (Model.SelectedCategoryTopList != null)
+{
+    <section style="margin-top: 2rem;">
+        <h3>@Model.SelectedCategoryTopList.CategoryName</h3>
+        <ol>
+            @foreach (var film in Model.SelectedCategoryTopList.TopFilms)
+            {
+                <li>@film.Title</li>
+            }
+        </ol>
+    </section>
+}

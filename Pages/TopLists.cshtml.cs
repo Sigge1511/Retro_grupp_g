@@ -37,7 +37,15 @@ namespace Retro_grupp_g.Pages
                 .OrderByDescending(f => f.RentalCount).Take(5).ToList()
             }).ToList();
 
-            //Om personalen valt annan kategori från dropdownlistan
+            //Dropdown för alla andra kategorier
+            OtherCategories = _context.Categories.Where(c => !StaticCategories.Contains(c.Name))
+                .Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.Name
+                }).ToList();
+
+            //Om personalen valt kategori från dropdownlistan
             if (SelectedCategoryId.HasValue)
             {
                 SelectedCategoryTopList = _context.Categories.Where(c => c.CategoryId == SelectedCategoryId.Value)
