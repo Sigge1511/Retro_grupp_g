@@ -1,0 +1,36 @@
+﻿@page
+@model Retro_grupp_g.Pages.Customers.IndexModel
+@{
+}
+
+<h1>Kunder</h1>
+
+<p><a class="btn btn-primary" asp-page="Create">Ny kund</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Namn</th>
+            <th>Kund-ID</th>
+            <th>E-post</th>
+            <th>Aktiv</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model.Customers)
+        {
+            <tr> 
+            <td>@c.FirstName @c.LastName</td>
+            <td>@c.CustomerId</td>
+            <td>@c.Email</td>   
+            <td>@(c.Active ? "Ja" : "Nej")</td>
+            <td>
+                <a asp-page="Details" asp-route-id="@c.CustomerId">Visa</a>
+                <a asp-page="Edit" asp-route-id="@c.CustomerId">Redigera</a>
+            <a asp-page="Delete" asp-route-id="@c.CustomerId">Ta bort</a>
+            </td>
+            </tr>
+        }
+    </tbody>
+    </table>

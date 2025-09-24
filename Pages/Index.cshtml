@@ -8,7 +8,7 @@
 
 <header class="rt-header dashboard">
     <img src="/images/RetroLogo.png" alt="RetroTapes VHS Rentals" class="rt-logo" />
-    <div class="rt-user">Inloggad som: <strong>Anställds namn</strong></div>
+    <div class="rt-user">Inloggad som: <strong>@Model.StaffName</strong></div>
 </header>
 
 <!-- Obs funktion för att visa vilken anställd som är inloggad saknas-->
@@ -19,7 +19,7 @@
     <!-- 3 x 2 stora rutor -->
     <section class="grid-big">
         <a asp-page="/Rent" class="tile tile--green">Hyr</a>
-        <a asp-page="/Return" class="tile tile--orange">Åter</a>
+        <a asp-page="/Rentals/Return" class="tile tile--orange">Åter</a>
         <a asp-page="/Search" class="tile tile--cream">Sök</a>
 
         <a asp-page="/Customer" class="tile tile--cream">Kund</a>

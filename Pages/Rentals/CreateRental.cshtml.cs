@@ -17,17 +17,10 @@ namespace Retro_grupp_g.Pages
 
         //Sökfält
 
-        [BindProperty(SupportsGet = true)]
-        public string SearchTitle { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public string SearchActor { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public string SearchDirector { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public string SearchGenre { get; set; }
+        public string SearchTitle => Request.Query["SearchTitle"];
+        public string SearchActor => Request.Query["SearchActor"];
+        public string SearchDirector => Request.Query["SearchDirector"];
+        public string SearchGenre => Request.Query["SearchGenre"];
 
         public List<FilmViewModel> Filmer { get; set; } = new();
         public List<CustomerViewModel> Customers { get; set; } = new();
@@ -124,6 +117,8 @@ namespace Retro_grupp_g.Pages
         //Post: Hyra Film
         public async Task<IActionResult> OnPostRentAsync()
         {
+
+            
             //Kontrollera skuld
             var HasDebt = await _context.Payments
                 .Where(p => p.CustomerId == SelectedCustomerId)
@@ -137,29 +132,66 @@ namespace Retro_grupp_g.Pages
                 }
             }
 
-            //Skapa ny uthyrning
-            var inventoryItem = await _context.Inventories
-                .FirstOrDefaultAsync(i => i.FilmId == FilmId);
 
-            if (inventoryItem == null)
+            //------ÄNDRINGAR FÖR ATT SKAPA HYRA FILM FUNKTIONEN------
+
+            //Kontrollera om filmern finns i lager och är tillgänglig
+            var availableInventoryItem = await _context.Inventories
+                .Where(i => i.FilmId == FilmId &&
+                !_context.Rentals.Any(r => r.InventoryId == i.InventoryId && r.ReturnDate == null))
+                .FirstOrDefaultAsync();
+
+            if (availableInventoryItem == null)
             {
                 ModelState.AddModelError(string.Empty, "Filmen finns inte i lager");
                 return RedirectToPage();
             }
-            var rental = new Rental
+            // Hämta priset (rental_rate) från filmen
+            var rentalRate = await _context.Films
+                .Where(f => f.FilmId == FilmId)
+                .Select(f => f.RentalRate)
+                .FirstOrDefaultAsync();
+
+
+            //anropa stored procedure rent_movie
+            var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
+
+            using (var command = connection.CreateCommand())
             {
-                InventoryId = inventoryItem.InventoryId,
-                CustomerId = (ushort)SelectedCustomerId,
-                StaffId = (byte)SelectedStaffId,
-                RentalDate = DateTime.Now
-            };
+                command.CommandText = "CALL rent_movie(@customer_id, @inventory_id, @p_staff_id, @p_amount)";
+                command.CommandType = System.Data.CommandType.Text;
 
-            _context.Rentals.Add(rental);
-            await _context.SaveChangesAsync();
+                var customerParam = command.CreateParameter();
+                customerParam.ParameterName = "@customer_id";
+                customerParam.Value = SelectedCustomerId;
+                command.Parameters.Add(customerParam);
 
+                var inventoryParam = command.CreateParameter();
+                inventoryParam.ParameterName = "@inventory_id";
+                inventoryParam.Value = availableInventoryItem.InventoryId;
+                command.Parameters.Add(inventoryParam);
+
+                var staffParam = command.CreateParameter();
+                staffParam.ParameterName = "@p_staff_id";
+                staffParam.Value = SelectedStaffId;
+                command.Parameters.Add(staffParam);
+
+                var amountParam = command.CreateParameter();
+                amountParam.ParameterName = "@p_amount";
+                amountParam.Value = rentalRate;
+                command.Parameters.Add(amountParam);
+
+                await command.ExecuteNonQueryAsync();
+            }
+            await connection.CloseAsync();
+
+            ModelState.Clear();
+            TempData["Success"] = "Filmen har hyrts ut!";
             return RedirectToPage();
 
-        }
+        }//Slut på ändringar för hyra film funktionen.
+
         // POST: Returnera film
         public async Task<IActionResult> OnPostReturnAsync()
         {

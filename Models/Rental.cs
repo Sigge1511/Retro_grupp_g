@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Retro_grupp_g.Models;
 
@@ -26,5 +27,7 @@ public partial class Rental
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
     public virtual Staff Staff { get; set; } = null!;
+    
+    [NotMapped] //Lägger den som notmapped då det inte finns någon kolumn i tabellen
     public int FilmId { get; internal set; }
 }

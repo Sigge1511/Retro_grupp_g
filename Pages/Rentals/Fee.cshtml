@@ -1,0 +1,60 @@
+﻿@page
+@model Retro_grupp_g.Pages.Rentals.FeeModel
+@{
+    ViewData["Title"] = "Sen retur – avgift";
+}
+
+<h2>Sen retur – avgift</h2>
+
+@if (TempData["Msg"] is string msg)
+{
+    <div class="alert alert-info" id="serverMsg">@msg</div>
+}
+
+<div class="card mb-3">
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-3">Film</dt>
+      <dd class="col-sm-9">@Model.FilmTitle</dd>
+
+      <dt class="col-sm-3">Kund</dt>
+      <dd class="col-sm-9">@Model.ActualCustomerName</dd>
+
+      <dt class="col-sm-3">Vald kund-ID</dt>
+      <dd class="col-sm-9">@Model.CustomerId</dd>
+
+      <dt class="col-sm-3">Uthyrningsdatum</dt>
+      <dd class="col-sm-9">@Model.RentalDate.ToString("yyyy-MM-dd")</dd>
+
+      <dt class="col-sm-3">Förfallodag</dt>
+      <dd class="col-sm-9">@Model.DueDate.ToString("yyyy-MM-dd")</dd>
+
+      <dt class="col-sm-3">Dagar sen</dt>
+      <dd class="col-sm-9">@Model.DaysLate</dd>
+
+      <dt class="col-sm-3">Avgift</dt>
+      <dd class="col-sm-9">$@Model.FeeAmount.ToString("0.00")</dd>
+    </dl>
+  </div>
+</div>
+
+@if (!Model.IsReal)
+{
+  <div class="alert alert-warning">
+    Ej rätt kund som gör retur. Ingen ändring kommer att sparas.
+  </div>
+}
+
+<form method="post">
+  <input type="hidden" asp-for="RentalId" />
+  <input type="hidden" asp-for="InventoryId" />
+  <input type="hidden" asp-for="CustomerId" />
+
+<button type="submit"
+    class="btn btn-warning me-2"
+    asp-page-handler="ReturnLate"
+    disabled="@(Model.IsReal ? null : "disabled")">Bekräfta sen retur</button>
+
+
+  <a class="btn btn-secondary" asp-page="/Rentals/Return">Avbryt</a>
+</form>

@@ -1,0 +1,20 @@
+﻿@page
+@model Retro_grupp_g.Pages.Customers.DeleteModel
+@{
+}
+
+<h1>Ta bort kund</h1>
+
+<h3>Är du säker på att du vill ta bort denna kund?</h3>
+
+<div>
+    <strong>Namn:</strong> @Model.Customer.FirstName @Model.Customer.LastName <br />
+    <strong>E-post:</strong> @Model.Customer.Email <br />
+    <strong>Kund-ID:</strong> @Model.Customer.CustomerId
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="Customer.CustomerId" />
+    <button type="submit" class="btn btn-primary">Ta bort</button>
+    <a asp-page="Index" class="btn btn-secondary">Avbryt</a>
+</form>

@@ -1,0 +1,40 @@
+﻿@page
+@model Retro_grupp_g.Pages.Customers.DetailsModel
+@{
+}
+
+<h1>Kunddetaljer</h1>
+
+<div>
+    <p><strong>Namn:</strong> @Model.Customer.FirstName @Model.Customer.LastName</p>
+    <p><strong>Kund-ID:</strong> @Model.Customer.CustomerId </p>
+    <p><strong>E-post:</strong> @Model.Customer.Email</p>
+    <p><strong>Aktiv:</strong> @(Model.Customer.Active ? "Ja" : "Nej")</p>
+    <p><strong>Butik:</strong> @Model.Customer.StoreId</p>
+    <p><strong>Adress:</strong> @Model.Customer.AddressId</p>
+    <p><strong>Skapad:</strong> @Model.Customer.CreateDate</p>
+    <p><strong>Senast uppdaterad:</strong> @Model.Customer.LastUpdate</p>
+</div>
+
+<h4><strong>Hyrda filmer just nu:</strong></h4>
+@if (Model.Customer.Rentals.Any(r => r.ReturnDate == null))
+{
+    <ul>
+        @foreach (var rental in Model.Customer.Rentals.Where(r => r.ReturnDate == null))
+        {
+            <li>
+                @rental.Inventory?.Film?.Title
+                (Uthyrd: @rental.RentalDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm"))
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Denna kund har inga hyrda filmer just nu.</p>
+}
+
+<p>
+    <a asp-page="Edit" asp-route-id="@Model.Customer.CustomerId">Redigera</a> |
+    <a asp-page="Index">Tillbaka till listan</a>
+</p>
