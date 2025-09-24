@@ -17,6 +17,16 @@ namespace Retro_grupp_g.Pages
 
         public void OnGet()
         {
+            TopLists = _context.Categories.Select(c => new TopFilmsPerCategoryViewModel
+            {
+                CategoryName = c.Name,
+                TopFilms = c.FilmCategories.Select(fc => new FilmRentalCountViewModel
+                {
+                    Title = fc.Film.Title,
+                    RentalCount = fc.Film.Inventories.SelectMany(i => i.Rentals).Count()
+                })
+                .OrderByDescending(f => f.RentalCount).Take(5).ToList()
+            }).ToList();
         }
     }
 }
