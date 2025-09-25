@@ -1,0 +1,30 @@
+﻿@page "{id:int}"
+@model Retro_grupp_g.Pages.Addresses.DeleteModel
+@{
+    ViewData["Title"] = "Ta bort adress";
+}
+
+<h1>Ta bort adress</h1>
+
+@if (Model.InUse)
+{
+    <div class="alert alert-warning">
+        Adressen används av kund/personal/butik och kan inte tas bort.
+    </div>
+}
+
+<dl class="row">
+    <dt class="col-sm-3">Adress:</dt>
+    <dd class="col-sm-9">@Model.Address.Address1 @(!string.IsNullOrWhiteSpace(Model.Address.Address2) ? $" / {Model.Address.Address2}" : "")</dd>
+
+    <dt class="col-sm-3">Postnummer:</dt>
+    <dd class="col-sm-9">@Model.Address.PostalCode</dd>
+
+    <dt class="col-sm-3">Stad:</dt>
+    <dd class="col-sm-9">@Model.Address.City?.City1</dd>
+</dl>
+
+<form method="post">
+    <button type="submit" class="btn btn-secondary" @(Model.InUse ? "disabled" : "")>Ta bort</button>
+    <a asp-page="Index" class="btn btn-primary">Avbryt</a>
+</form>

@@ -12,7 +12,8 @@ namespace Retro_grupp_g.Pages.Customers
         public Customer Customer {  get; set; } = default!;
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            var customer = await _repo.GetDetailsAsync((ushort)id);
+            var customer = await _repo.GetDetailsAsync(id);
+
             if (customer == null) return NotFound();
 
             Customer = customer;

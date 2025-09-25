@@ -48,6 +48,7 @@ namespace Retro_grupp_g
             builder.Services.AddScoped<IFilmRepository, FilmRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IRentalRepository, RentalRepository>();
+            builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
             //Session för "inlogg" av personal
             builder.Services.AddSession(options =>

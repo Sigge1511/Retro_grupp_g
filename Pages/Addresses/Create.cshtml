@@ -1,0 +1,56 @@
+﻿@page
+@model Retro_grupp_g.Pages.Addresses.CreateModel
+@{
+    ViewData["Title"] = "Ny adress";
+}
+
+<h1>Ny adress</h1>
+
+<p class="text-muted">Fält markerade med <strong>*</strong> är obligatoriska.</p>
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group mb-2">
+        <label class="form-label" for="Address_Address1">Adress *</label>
+        <input asp-for="Address.Address1" class="form-control" id="Address_Address1" />
+        <span asp-validation-for="Address.Address1" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label class="form-label" for="Address_Address2">Adress 2 (valfritt)</label>
+        <input asp-for="Address.Address2" class="form-control" id="Address_Address2" />
+        <span asp-validation-for="Address.Address2" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label class="form-label" for="Address_District">Stadsdel *</label>
+        <input asp-for="Address.District" class="form-control" id="Address_District" />
+        <span asp-validation-for="Address.District" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label class="form-label" for="Address_CityId">Stad *</label>
+        <select asp-for="Address.CityId" class="form-control" asp-items="Model.Cities" id="Address_CityId">
+            <option value="">-- Välj stad --</option>
+        </select>
+        <span asp-validation-for="Address.CityId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-2">
+        <label class="form-label" for="Address_PostalCode">Postnummer (valfritt)</label>
+        <input asp-for="Address.PostalCode" class="form-control" id="Address_PostalCode" />
+        <span asp-validation-for="Address.PostalCode" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label class="form-label" for="Address_Phone">Telefon *</label>
+        <input asp-for="Address.Phone" class="form-control" id="Address_Phone" />
+        <span asp-validation-for="Address.Phone" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Spara</button>
+    <a href="@Model.ReturnUrl" class="btn btn-secondary">Tillbaka</a>
+</form>

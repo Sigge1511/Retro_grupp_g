@@ -11,7 +11,8 @@
     <p><strong>E-post:</strong> @Model.Customer.Email</p>
     <p><strong>Aktiv:</strong> @(Model.Customer.Active ? "Ja" : "Nej")</p>
     <p><strong>Butik:</strong> @Model.Customer.StoreId</p>
-    <p><strong>Adress:</strong> @Model.Customer.AddressId</p>
+    <p><strong>Adress:</strong> @Model.Customer.Address.Address1</p>
+    <p><strong>Adress-ID:</strong> @Model.Customer.AddressId</p>
     <p><strong>Skapad:</strong> @Model.Customer.CreateDate</p>
     <p><strong>Senast uppdaterad:</strong> @Model.Customer.LastUpdate</p>
 </div>
@@ -35,6 +36,6 @@ else
 }
 
 <p>
-    <a asp-page="Edit" asp-route-id="@Model.Customer.CustomerId">Redigera</a> |
-    <a asp-page="Index">Tillbaka till listan</a>
+    <a asp-page="Edit" class="btn btn-primary" asp-route-id="@Model.Customer.CustomerId">Redigera</a> 
+    <a asp-page="Index" class="btn btn-primary">Tillbaka till listan</a>
 </p>

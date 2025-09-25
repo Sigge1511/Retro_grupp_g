@@ -13,7 +13,7 @@
     font-style: normal;
 }
 
-/* Bold font (sÂ att h1 kan bli ‰kta bold) */
+/* Bold font (s√• att h1 kan bli √§kta bold) */
 @font-face {
     font-family: "Visby Regular";
     src: url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.eot");
@@ -34,7 +34,7 @@
 
 
 
-/****************************************************LƒNKAR****************************************************/
+/****************************************************L√ÑNKAR****************************************************/
 
 .small-link {
     color: #831f00;
@@ -90,14 +90,14 @@ p {
     margin-top: 2rem;
     width: 80%;
     align-content: center;
-    margin: 0 auto; /* CENTRERA griden pÂ sidan */
+    margin: 0 auto; /* CENTRERA griden p√• sidan */
 }
 
 .dashboard-box {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #ffffff; /* byt till din f‰rg */
+    background-color: #ffffff; /* byt till din f√§rg */
     border: 2px solid #ddd;
     border-radius: 12px;
     padding: 2rem;
@@ -133,13 +133,49 @@ p {
 .btn-primary:hover {
     background-color: #1b4056;
 }
+.btn-primary[disabled],
+.btn-primary:disabled {
+    /* Din anpassade inaktiva f√§rg */
+    background-color: #364a5b; /* Anv√§nd en f√§rg fr√•n er palett */
+    /* Tar bort Bootstraps opacitet som ofta g√∂r knappen f√∂r transparent */
+    opacity: 0.9;
+}
 .btn-secondary {
     background-color: #831f00;
+    font-family: 'Visby Regular';
+    font-weight: 500;
     font-size: 2rem;
 }
 .btn-secondary:hover {
     background-color: #5a1c01;
 }
+
+.btn-secondary[disabled],
+.btn-secondary:disabled {
+    /* Din anpassade inaktiva f√§rg */
+    background-color: #562415; /* Anv√§nd en f√§rg fr√•n er palett */
+    /* Tar bort Bootstraps opacitet som ofta g√∂r knappen f√∂r transparent */
+    opacity: 0.9;
+}
+.btn-sm.btn-outline-primary, .btn-outline-primary:focus {
+    color: #2a5a79;
+    border-color: #2a5a79;
+}
+.btn-sm.btn-outline-primary:hover, .btn-outline-primary:focus {
+    color: white;
+    border-color: #1b4056;
+    background-color: #1b4056;
+}
+.btn-sm.btn-outline-danger {
+    color: #831f00;
+    border-color: #831f00;
+}
+    .btn-sm.btn-outline-danger:hover, btn-outline-danger:focus {
+        color: white;
+        border-color: #831f00;
+        background-color: #831f00;        
+    }
+
 .btn-warning {
     background-color: #ffd994;
     font-size: 2rem;
@@ -149,9 +185,10 @@ btn-danger {
     background-color: #dc3c22;
     font-size: 2rem;
 }
-/****************************************************FORMULƒR &co****************************************************/
+
+/****************************************************FORMUL√ÑR &co****************************************************/
 .form-control {
-    font-size: 1.2rem; /* ˆka textstorleken */
+    font-size: 1.2rem; /* √∂ka textstorleken */
     padding: 0.6rem 0.6rem; /* lite mer luft */
 }
 .form-label {
@@ -164,13 +201,13 @@ btn-danger {
 }
 
 .actor-box {
-    max-height: 420px; /* gˆr listan rullbar om den blir lÂng */
+    max-height: 420px; /* g√∂r listan rullbar om den blir l√•ng */
 
-    width: 100%; /* fyller hela tillg‰ngliga ytan */
-    min-width: 600px; /* ser till att 3 kolumner inte blir fˆr smala */
+    width: 100%; /* fyller hela tillg√§ngliga ytan */
+    min-width: 600px; /* ser till att 3 kolumner inte blir f√∂r smala */
     overflow-y: auto;
     border: 1px solid #e5e7eb; /* ljus ram */
-    border-radius: .75rem; /* rundade hˆrn */
+    border-radius: .75rem; /* rundade h√∂rn */
     padding: .75rem;
     background: #fff;
 }
@@ -196,43 +233,36 @@ head {
 .col-sm-2 {
     color: #831f00;
 }
-
-
 .content {
     max-width: 100%;
     margin: 0;
     padding: 1px 2px;
 }
-
 .table-content {
-    max-width: 1400px; /* v‰lj 1200ñ1600 efter smak */
+    max-width: 1400px; /* v√§lj 1200‚Äì1600 efter smak */
     margin: 0 auto;
     margin-left: 50px;
 }
-
 .table th, .table td {
     vertical-align: top;
     text-align: left;
 }
-
 .table tr:nth-child(even) {
     background: #fafafa;
 }
-
 .table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* <- nyckeln: tvinga allt att fÂ plats */
+    table-layout: fixed; /* <- nyckeln: tvinga allt att f√• plats */
     font-size: 0.95rem;
-    margin-left: 0 !important; /* ingen extra fˆrskjutning */
+    margin-left: 0 !important; /* ingen extra f√∂rskjutning */
     border-collapse: collapse;
     table-layout: fixed;
 }
-
     .table th {
         white-space: normal; /* <-- viktigast */
         word-break: keep-all; /* bryt helst bara mellan ord */
-        overflow-wrap: anywhere; /* men tillÂt brytning om ett ord ‰r fˆr lÂngt */
+        overflow-wrap: anywhere; /* men till√•t brytning om ett ord √§r f√∂r l√•ngt */
         background-color: white;
         color: #831f00;
         position: sticky;
@@ -241,7 +271,6 @@ head {
         font-weight: 600;
         border-bottom: 2px solid #e5e5e5;
     }
-
     .table td {
         color: black;
         white-space: normal; /* <-- viktigast */
@@ -254,7 +283,7 @@ head {
 .c-actions {
     width: 7%;
 }
-    /* eller 6ñ8 %, testa */
+    /* eller 6‚Äì8 %, testa */
     .c-actions td {
         white-space: nowrap;
         text-align: right;
@@ -309,37 +338,31 @@ head {
     width: 6%;
 }
 /* Edit/Details/Delete */
-
-/* Bryt lÂnga texter d‰r det behˆvs */
+/* Bryt l√•nga texter d√§r det beh√∂vs */
 .c-desc td, .c-extra td {
     word-break: break-word;
-    white-space: normal; /* lÂt text radas om */
+    white-space: normal; /* l√•t text radas om */
 }
-
-/* Siffror hˆgerst‰lls = l‰ttare att j‰mfˆra */
+/* Siffror h√∂gerst√§lls = l√§ttare att j√§mf√∂ra */
 .c-rate td, .c-repl td, .c-len td, .c-days td {
     text-align: right;
 }
-
 /* Diskreta rader */
 .film-table td {
     border-bottom: 1px solid #eee;
 }
 
-
-
-/*Ny navbar*/
-
+/***************************    Ny navbar      */
 .navbar {
     background-color: #2a5a79;
     display: flex;
-    justify-content: center !important; /* centrera radens innehÂll */
+    justify-content: center !important; /* centrera radens inneh√•ll */
     border-bottom: 2px solid antiquewhite; /* giltig border */
 }
 
 .navbar-container {
     display: flex;
-    justify-content: center; /* centrera l‰nkarna */
+    justify-content: center; /* centrera l√§nkarna */
     gap: 20px;
     max-width: 820px; 
     margin: 0 auto; /* centrera ramen */
@@ -351,7 +374,7 @@ head {
     font-weight: 700;
     color: #fff1c2;
     font-size: 1.3rem;
-    margin: 0; /* viktigt: inga auto-/v‰nstermarginaler */
+    margin: 0; /* viktigt: inga auto-/v√§nstermarginaler */
     padding: 0 12px;
     text-decoration: none;
       

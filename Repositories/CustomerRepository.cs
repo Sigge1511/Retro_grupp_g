@@ -40,10 +40,14 @@ namespace Retro_grupp_g.Repositories
         public async Task<Customer?> GetDetailsAsync(int id)
         {
             return await _db.Customers
+                .AsNoTracking()
+                .Include(c => c.Address)                      
+                .Include(c => c.Store)                        
                 .Include(c => c.Rentals)
                     .ThenInclude(r => r.Inventory)
                         .ThenInclude(i => i.Film)
                 .FirstOrDefaultAsync(c => c.CustomerId == id);
         }
+
     }
 }

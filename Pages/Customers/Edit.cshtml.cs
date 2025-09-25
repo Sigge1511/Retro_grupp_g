@@ -35,7 +35,7 @@ namespace Retro_grupp_g.Pages.Customers
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             if (!ModelState.IsValid)
             {
@@ -43,7 +43,18 @@ namespace Retro_grupp_g.Pages.Customers
                 return Page();
             }
 
-            await _repo.UpdateAsync(Customer);
+            var entity = await _repo.GetByIdAsync(id);
+            if (entity is null) return NotFound();
+
+            entity.FirstName = Customer.FirstName;
+            entity.LastName = Customer.LastName;
+            entity.Email = Customer.Email;
+            entity.StoreId = Customer.StoreId;
+            entity.AddressId = Customer.AddressId;
+            entity.Active = Customer.Active;
+            entity.LastUpdate = DateTime.UtcNow;
+
+            await _repo.UpdateAsync(entity);
             await _repo.SaveAsync();
 
             return RedirectToPage("Index");

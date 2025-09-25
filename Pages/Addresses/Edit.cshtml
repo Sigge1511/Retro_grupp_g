@@ -1,0 +1,50 @@
+﻿@page
+@model Retro_grupp_g.Pages.Addresses.EditModel
+@{
+}
+
+<h1>Redigera adress</h1>
+
+<p class="text-muted">Fält markerade med <strong>*</strong> är obligatoriska.</p>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Address.AddressId" />
+
+    <div class="form-group">
+        <label class="form-label" asp-for="Address.Address1">Adress *</label>
+        <input asp-for="Address.Address1" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label class="form-label" asp-for="Address.Address2">Adress 2 (valfritt)</label>
+        <input asp-for="Address.Address2" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label class="form-label" asp-for="Address.District">Stadsdel *</label>
+        <input asp-for="Address.District" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label class="form-label" asp-for="Address.CityId">Stad *</label>
+        <select asp-for="Address.CityId" class="form-control"
+                asp-items="@(new SelectList(Model.Cities, "CityId", "City1"))">
+            <option value="">-- Välj stad --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label" asp-for="Address.PostalCode">Postnummer (valfritt)</label>
+        <input asp-for="Address.PostalCode" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label class="form-label" asp-for="Address.Phone">Telefon *</label>
+        <input asp-for="Address.Phone" class="form-control" />
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Spara</button>
+    <a asp-page="/Addresses/Index" class="btn btn-secondary">Avbryt</a>
+</form>
