@@ -40,14 +40,25 @@ namespace Retro_grupp_g.Pages.Addresses
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid) return Page();
+            ModelState.Remove("Address.City");
+            ModelState.Remove("Address.City.CityId");
+
+            if (!ModelState.IsValid)
+            {
+                Cities = await _db.Cities
+                    .Select(c => new City { CityId = c.CityId, City1 = c.City1 })
+                    .ToListAsync();
+
+                return Page();
+            }
 
             Address.LastUpdate = DateTime.UtcNow;
 
             await _repo.UpdateAsync(Address);
             await _repo.SaveAsync();
 
-            return RedirectToPage("/Customers/Index");
+            return RedirectToPage("/Addresses/Index");
         }
+
     }
 }

@@ -14,17 +14,17 @@
 }
 
 <dl class="row">
-    <dt class="col-sm-3">Adress</dt>
+    <dt class="col-sm-3">Adress:</dt>
     <dd class="col-sm-9">@Model.Address.Address1 @(!string.IsNullOrWhiteSpace(Model.Address.Address2) ? $" / {Model.Address.Address2}" : "")</dd>
 
-    <dt class="col-sm-3">Postnummer</dt>
+    <dt class="col-sm-3">Postnummer:</dt>
     <dd class="col-sm-9">@Model.Address.PostalCode</dd>
 
-    <dt class="col-sm-3">Stad</dt>
+    <dt class="col-sm-3">Stad:</dt>
     <dd class="col-sm-9">@Model.Address.City?.City1</dd>
 </dl>
 
 <form method="post">
-    <button type="submit" class="btn btn-danger" @(Model.InUse ? "disabled" : "")>Ta bort</button>
+    <button type="submit" class="btn btn-primary" @(Model.InUse ? "disabled" : "")>Ta bort</button>
     <a asp-page="Index" class="btn btn-secondary">Avbryt</a>
 </form>

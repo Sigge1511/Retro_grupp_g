@@ -29,9 +29,7 @@ namespace Retro_grupp_g.Pages.Addresses
             InUse = !await _repo.CanDeleteAsync(id);
             if (InUse)
             {
-              
                 Address = await _repo.GetByIdAsync(id) ?? new Address();
-                ModelState.AddModelError(string.Empty, "Adressen används av kund/personal/butik och kan inte tas bort.");
                 return Page();
             }
 

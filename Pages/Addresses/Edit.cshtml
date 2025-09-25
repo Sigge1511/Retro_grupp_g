@@ -6,6 +6,8 @@
 <h1>Redigera adress</h1>
 
 <form method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Address.AddressId" />
 
     <div class="form-group">
@@ -42,5 +44,5 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Spara</button>
-    <a asp-page="/Customers/Index" class="btn btn-secondary">Avbryt</a>
+    <a asp-page="/Addresses/Index" class="btn btn-secondary">Avbryt</a>
 </form>

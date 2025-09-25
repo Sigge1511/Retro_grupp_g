@@ -12,8 +12,12 @@ namespace Retro_grupp_g.Repositories
         public Task<List<Address>> GetAllAsync() =>
             _db.Addresses.OrderBy(a => a.Address1).ToListAsync();
 
-        public Task<Address?> GetByIdAsync(int id) =>
-            _db.Addresses.FindAsync(id).AsTask();
+        public async Task<Address?> GetByIdAsync(int id)
+        {
+            return await _db.Addresses
+                .Include(a => a.City)
+                .FirstOrDefaultAsync(a => a.AddressId == id);
+        }
 
         public async Task AddAsync(Address address)
         {
