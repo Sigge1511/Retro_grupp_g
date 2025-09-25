@@ -13,7 +13,7 @@
     font-style: normal;
 }
 
-/* Bold font (så att h1 kan bli äkta bold) */
+/* Bold font (sÃ¥ att h1 kan bli Ã¤kta bold) */
 @font-face {
     font-family: "Visby Regular";
     src: url("https://db.onlinewebfonts.com/t/e3d4d88f7ba46cfbdfb4045368826129.eot");
@@ -34,7 +34,7 @@
 
 
 
-/****************************************************LÄNKAR****************************************************/
+/****************************************************LÃ„NKAR****************************************************/
 
 .small-link {
     color: #831f00;
@@ -90,14 +90,14 @@ p {
     margin-top: 2rem;
     width: 80%;
     align-content: center;
-    margin: 0 auto; /* CENTRERA griden på sidan */
+    margin: 0 auto; /* CENTRERA griden pÃ¥ sidan */
 }
 
 .dashboard-box {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #ffffff; /* byt till din färg */
+    background-color: #ffffff; /* byt till din fÃ¤rg */
     border: 2px solid #ddd;
     border-radius: 12px;
     padding: 2rem;
@@ -135,9 +135,9 @@ p {
 }
 .btn-primary[disabled],
 .btn-primary:disabled {
-    /* Din anpassade inaktiva färg */
-    background-color: #364a5b; /* Använd en färg från er palett */
-    /* Tar bort Bootstraps opacitet som ofta gör knappen för transparent */
+    /* Din anpassade inaktiva fÃ¤rg */
+    background-color: #364a5b; /* AnvÃ¤nd en fÃ¤rg frÃ¥n er palett */
+    /* Tar bort Bootstraps opacitet som ofta gÃ¶r knappen fÃ¶r transparent */
     opacity: 0.9;
 }
 .btn-secondary {
@@ -149,11 +149,12 @@ p {
 .btn-secondary:hover {
     background-color: #5a1c01;
 }
+
 .btn-secondary[disabled],
 .btn-secondary:disabled {
-    /* Din anpassade inaktiva färg */
-    background-color: #562415; /* Använd en färg från er palett */
-    /* Tar bort Bootstraps opacitet som ofta gör knappen för transparent */
+    /* Din anpassade inaktiva fÃ¤rg */
+    background-color: #562415; /* AnvÃ¤nd en fÃ¤rg frÃ¥n er palett */
+    /* Tar bort Bootstraps opacitet som ofta gÃ¶r knappen fÃ¶r transparent */
     opacity: 0.9;
 }
 .btn-sm.btn-outline-primary, .btn-outline-primary:focus {
@@ -175,9 +176,19 @@ p {
         background-color: #831f00;        
     }
 
-/****************************************************FORMULÄR &co****************************************************/
+.btn-warning {
+    background-color: #ffd994;
+    font-size: 2rem;
+    color: black;
+}
+btn-danger {
+    background-color: #dc3c22;
+    font-size: 2rem;
+}
+
+/****************************************************FORMULÃ„R &co****************************************************/
 .form-control {
-    font-size: 1.2rem; /* öka textstorleken */
+    font-size: 1.2rem; /* Ã¶ka textstorleken */
     padding: 0.6rem 0.6rem; /* lite mer luft */
 }
 .form-label {
@@ -190,13 +201,13 @@ p {
 }
 
 .actor-box {
-    max-height: 420px; /* gör listan rullbar om den blir lång */
+    max-height: 420px; /* gÃ¶r listan rullbar om den blir lÃ¥ng */
 
-    width: 100%; /* fyller hela tillgängliga ytan */
-    min-width: 600px; /* ser till att 3 kolumner inte blir för smala */
+    width: 100%; /* fyller hela tillgÃ¤ngliga ytan */
+    min-width: 600px; /* ser till att 3 kolumner inte blir fÃ¶r smala */
     overflow-y: auto;
     border: 1px solid #e5e7eb; /* ljus ram */
-    border-radius: .75rem; /* rundade hörn */
+    border-radius: .75rem; /* rundade hÃ¶rn */
     padding: .75rem;
     background: #fff;
 }
@@ -228,7 +239,7 @@ head {
     padding: 1px 2px;
 }
 .table-content {
-    max-width: 1400px; /* välj 1200–1600 efter smak */
+    max-width: 1400px; /* vÃ¤lj 1200â€“1600 efter smak */
     margin: 0 auto;
     margin-left: 50px;
 }
@@ -242,16 +253,16 @@ head {
 .table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* <- nyckeln: tvinga allt att få plats */
+    table-layout: fixed; /* <- nyckeln: tvinga allt att fÃ¥ plats */
     font-size: 0.95rem;
-    margin-left: 0 !important; /* ingen extra förskjutning */
+    margin-left: 0 !important; /* ingen extra fÃ¶rskjutning */
     border-collapse: collapse;
     table-layout: fixed;
 }
     .table th {
         white-space: normal; /* <-- viktigast */
         word-break: keep-all; /* bryt helst bara mellan ord */
-        overflow-wrap: anywhere; /* men tillåt brytning om ett ord är för långt */
+        overflow-wrap: anywhere; /* men tillÃ¥t brytning om ett ord Ã¤r fÃ¶r lÃ¥ngt */
         background-color: white;
         color: #831f00;
         position: sticky;
@@ -272,7 +283,7 @@ head {
 .c-actions {
     width: 7%;
 }
-    /* eller 6–8 %, testa */
+    /* eller 6â€“8 %, testa */
     .c-actions td {
         white-space: nowrap;
         text-align: right;
@@ -327,12 +338,12 @@ head {
     width: 6%;
 }
 /* Edit/Details/Delete */
-/* Bryt långa texter där det behövs */
+/* Bryt lÃ¥nga texter dÃ¤r det behÃ¶vs */
 .c-desc td, .c-extra td {
     word-break: break-word;
-    white-space: normal; /* låt text radas om */
+    white-space: normal; /* lÃ¥t text radas om */
 }
-/* Siffror högerställs = lättare att jämföra */
+/* Siffror hÃ¶gerstÃ¤lls = lÃ¤ttare att jÃ¤mfÃ¶ra */
 .c-rate td, .c-repl td, .c-len td, .c-days td {
     text-align: right;
 }
@@ -345,13 +356,13 @@ head {
 .navbar {
     background-color: #2a5a79;
     display: flex;
-    justify-content: center !important; /* centrera radens innehåll */
+    justify-content: center !important; /* centrera radens innehÃ¥ll */
     border-bottom: 2px solid antiquewhite; /* giltig border */
 }
 
 .navbar-container {
     display: flex;
-    justify-content: center; /* centrera länkarna */
+    justify-content: center; /* centrera lÃ¤nkarna */
     gap: 20px;
     max-width: 820px; 
     margin: 0 auto; /* centrera ramen */
@@ -363,7 +374,7 @@ head {
     font-weight: 700;
     color: #fff1c2;
     font-size: 1.3rem;
-    margin: 0; /* viktigt: inga auto-/vänstermarginaler */
+    margin: 0; /* viktigt: inga auto-/vÃ¤nstermarginaler */
     padding: 0 12px;
     text-decoration: none;
       
