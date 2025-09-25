@@ -24,8 +24,8 @@
         <select asp-for="Customer.StoreId" asp-items="Model.Stores" class="form-select"></select>
         <span asp-validation-for="Customer.StoreId" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="Customer.AddressId">Adress</label>
+    <div class="mb-2">
+        <label asp-for="Customer.AddressId" class="form-label">Adress</label>
         <select asp-for="Customer.AddressId"
                 asp-items="Model.Addresses"
                 class="form-control">
@@ -34,7 +34,7 @@
         <span asp-validation-for="Customer.AddressId" class="text-danger"></span>
     </div>
     <p>
-        <a asp-page="/Addresses/Create" asp-route-returnUrl="/Customers/Create" class="btn btn-link">
+        <a asp-page="/Addresses/Create" asp-route-returnUrl="/Customers/Create" class="small-link">
             Lägg till ny adress
         </a>
     </p>
