@@ -125,7 +125,25 @@ namespace Retro_grupp_g.Pages.Rentals
 
         //Task för att ta betalt för skadad film och ropa på RentalRepository
 
-
+        public async Task<IActionResult> OnPostReplaceAsync()
+        {
+            if (SelectedInventoryId <= 0 || SelectedCustomerId <= 0)
+            {
+                TempData["Msg"] = "Välj kund och film.";
+                await OnGetAsync();
+                return Page();
+            }
+            // Vi anropar denna metod för att hämta info om en ev. skadad retur
+            var preview = await _rentalRepository.GetReplaceFeePreviewByInventoryAsync(SelectedInventoryId);
+            if (!preview.Found)
+            {
+                TempData["Msg"] = "Ingen öppen uthyrning hittades för vald film.";
+                await OnGetAsync();
+                return Page();
+            }
+            // VIKTIGT: Vi omdirigerar nu till Fee-sidan och skickar med RentalId i URL:en
+            return RedirectToPage("/Rentals/ReplaceFilm", new { rentalId = preview.RentalId });
+        }
 
         //****************
         //Backup metod för att slippa krascha sidan vid POST utan handler

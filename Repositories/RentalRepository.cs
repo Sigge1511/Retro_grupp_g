@@ -123,7 +123,7 @@ namespace Retro_grupp_g.Repositories
             return (true, row.FilmTitle, rentalDay, dueDay, isLate, daysLate, duration,
                     row.ActualCustomerId, actualName, matches);
         }
-    // RETURER NORMAL POST ***************
+        // RETURER NORMAL POST ***************
         public async Task<(bool Ok, string Message)> ReturnNormalRealAsync(int inventoryId, int customerId)
         {
             var inv = (uint)inventoryId;
@@ -145,6 +145,7 @@ namespace Retro_grupp_g.Repositories
         }
 
 //********************** SENA RETURER **********************************************************
+        //GET
         private static (int daysLate, ushort fee) CalcLateFee(DateOnly rentalDay, int rentalDurationDays)
         {
             var due = rentalDay.AddDays(rentalDurationDays);
@@ -153,10 +154,10 @@ namespace Retro_grupp_g.Repositories
             ushort fee = (ushort)(daysLate == 0 ? 0m : (daysLate <= 3 ? 5m : 15m));
             return (daysLate, fee);
         }
-        //---
+        
         public async Task<(bool Found, int RentalId, int CustomerId, string CustomerName, 
-            string FilmTitle, DateOnly RentalDate, DateOnly DueDate, 
-            int DaysLate, ushort FeeAmount)>GetLateFeePreviewByInventoryAsync(int inventoryId)
+                           string FilmTitle, DateOnly RentalDate, DateOnly DueDate, 
+                           int DaysLate, ushort FeeAmount)>GetLateFeePreviewByInventoryAsync(int inventoryId)
         {
             var inv = (uint)inventoryId;
             var row = await _db.Rentals
@@ -189,10 +190,9 @@ namespace Retro_grupp_g.Repositories
                     $"{row.FirstName} {row.LastName}", row.Title,
                     rentalDay, due, daysLate, fee);
         }
-        //---
         public async Task<(bool Found, int RentalId, int CustomerId, int InventoryId, // Lägg till InventoryId här
-            string CustomerName, string FilmTitle, DateOnly RentalDate,
-            DateOnly DueDate, int DaysLate, ushort FeeAmount)> GetLateFeePreviewByRentalIdAsync(int rentalId)
+                           string CustomerName, string FilmTitle, DateOnly RentalDate,
+                           DateOnly DueDate, int DaysLate, ushort FeeAmount)> GetLateFeePreviewByRentalIdAsync(int rentalId)
         {
             var rid = (uint)rentalId;
             var row = await _db.Rentals
@@ -226,11 +226,10 @@ namespace Retro_grupp_g.Repositories
                     $"{row.FirstName} {row.LastName}", row.Title,
                     rentalDay, due, daysLate, fee);
         }
-
-        //--- Bekräfta “sen retur”: markera retur + skapa payment
+        //LATE POST
         public async Task<(bool Found, bool IsLate, int DaysLate, DateOnly DueDate,
-    string FilmTitle, ushort FeeAmount, bool IsReal, int? RentalId,
-    string ActualCustomerName)> ReturnLateRealAsync(int inventoryId, int customerId)
+                          string FilmTitle, ushort FeeAmount, bool IsReal, int? RentalId,
+                          string ActualCustomerName)> ReturnLateRealAsync(int inventoryId, int customerId)
         {
             var inv = (uint)inventoryId;
             var cid = (ushort)customerId;
@@ -294,10 +293,39 @@ namespace Retro_grupp_g.Repositories
             return (true, isLate, daysLate, due, result.FilmTitle, fee, isReal, (int)result.Rental.RentalId, $"{result.ActualCustomerFirstName} {result.ActualCustomerLastName}");
         }
 
-//********************** SKADAD RETUR/BORTTAPPAD **********************************************************
-        //GET
+        //********************** SKADAD RETUR/BORTTAPPAD **********************************************************
+        //GET 
+        public async Task<(bool Found, int RentalId, int CustomerId, string CustomerName,
+                          string FilmTitle, ushort FeeAmount)> GetReplaceFeePreviewByInventoryAsync(int inventoryId)
+        {
+            var inv = (uint)inventoryId;
 
-        
+            var row = await _db.Rentals
+                .AsNoTracking()
+                .Where(r => r.InventoryId == inv && r.ReturnDate == null) // Hitta den pågående hyran
+                .Select(r => new
+                {
+                    r.RentalId,
+                    Title = r.Inventory.Film.Title,
+                    ReplacementCost = r.Inventory.Film.ReplacementCost, // Filmens kostnad
+                    r.CustomerId,
+                    FirstName = r.Customer.FirstName,
+                    LastName = r.Customer.LastName
+                })
+                .FirstOrDefaultAsync();
+
+            if (row is null)
+                return (false, 0, 0, "", "", 0);
+
+            // Avgiften är Film.ReplacementCost
+            ushort fee = (ushort)row.ReplacementCost;
+
+            return (true, (int)row.RentalId, (int)row.CustomerId,
+                    $"{row.FirstName} {row.LastName}", row.Title,
+                    fee);
+        }
+
+
         //POST
         public Task ReturnDamagedAsync(int rentalId) => Task.CompletedTask;
 
