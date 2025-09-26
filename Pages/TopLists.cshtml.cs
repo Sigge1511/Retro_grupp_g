@@ -14,7 +14,7 @@ namespace Retro_grupp_g.Pages
         {
             _context = context;
         }
-        private readonly string[] StaticCategories = {"Action", "Comedy", "Romance", "Children", "Drama", "Horror", "New", "Sci-Fi"};
+        private readonly string[] StaticCategories = {"Action", "Comedy", "Children", "Drama", "Horror", "New"};
         public List<TopFilmsPerCategoryViewModel> StaticTopLists { get; set; } = new();
         public TopFilmsPerCategoryViewModel? SelectedCategoryTopList { get; set; }
 
