@@ -6,6 +6,7 @@
 <h1>Redigera kund</h1>
 
 <form method="post">
+    <input type="hidden" asp-for="Customer.CustomerId" />
     <div class="mb-2">
         <label asp-for="Customer.StoreId" class="form-label">Butik</label>
         <select asp-for="Customer.StoreId" asp-items="Model.Stores" class="form-select"></select>
@@ -37,4 +38,6 @@
         <input asp-for="Customer.Active" class="form-check-input" />
         <label asp-for="Customer.Active" class="form-check-label"></label>
     </div>
+    <button type="submit" class="btn btn-primary">Spara</button>
+    <a asp-page="/Customers/Index" class="btn btn-secondary">Avbryt</a>
     </form> 

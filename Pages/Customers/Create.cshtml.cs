@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -34,19 +35,51 @@ namespace Retro_grupp_g.Pages.Customers
 
         public async Task<IActionResult> OnPostAsync()
         {
+          
+            ModelState.Remove("Customer.Store");
+            ModelState.Remove("Customer.Address");
+            ModelState.Remove("Customer.Payments");
+            ModelState.Remove("Customer.Rentals");
+
             if (!ModelState.IsValid)
             {
-                await LoadDropdowns(); 
+                await LoadDropdowns();
+
+                TempData["Error"] = FirstModelError(ModelState);
                 return Page();
             }
 
-            if (Customer.CreateDate == default)
-                Customer.CreateDate = DateTime.UtcNow;
+            if (Customer.CreateDate == default) Customer.CreateDate = DateTime.UtcNow;
+            Customer.Active = true;
 
-            await _repo.AddAsync(Customer);
-            await _repo.SaveAsync();
-            return RedirectToPage("Index");
+            try
+            {
+                await _repo.AddAsync(Customer);
+                await _repo.SaveAsync();
+                TempData["Message"] = "Kunden skapades!";
+                return RedirectToPage("Index");
+            }
+            catch (DbUpdateException ex)
+            {
+                TempData["Error"] = $"DbUpdateException: {ex.GetBaseException().Message}";
+                await LoadDropdowns();
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Exception: {ex.GetBaseException().Message}";
+                await LoadDropdowns();
+                return Page();
+            }
         }
+        private static string FirstModelError(ModelStateDictionary ms)
+        {
+            foreach (var kv in ms)
+                foreach (var err in kv.Value!.Errors)
+                    return $"Fält: {kv.Key}, Fel: {err.ErrorMessage}";
+            return "Okänt valideringsfel.";
+        }
+
 
         private async Task LoadDropdowns()
         {

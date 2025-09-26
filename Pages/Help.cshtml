@@ -1,4 +1,21 @@
 ﻿@page
 @model Retro_grupp_g.Pages.HelpModel
 @{
+    ViewData["Title"] = "Help";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
 }
+<h1>Hjälp</h1>
+<div class="content">
+    <br>
+    <h2>Om du behöver hjälp omedelbart <br>vänligen kontakta supporten på 031-761 42 06</h2>
+    <br>
+    <h3>För att anmäla ett icke-akut ärende fyll i formuläret nedan:</h3>
+    <form method="post" action="#">
+        <div class="form-group mb-3">
+            <textarea class="form-control" rows="5" placeholder="Beskriv ditt problem"required></textarea>
+        </div>
+        <a href="/" class="btn btn-primary">Skicka in supportärende</a>
+    </form>
+    <br>
+    <h3>För att lägga en beställning av underhåll eller nya funktioner kan ni maila till oss <a class="small-link" href="mailto:rs.hudiksvall@ssrs.se">här</a>.</h3>
+</div>

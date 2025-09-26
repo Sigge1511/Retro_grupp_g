@@ -5,7 +5,11 @@
 
 <h1>Kunder</h1>
 
-<p><a class="btn btn-primary" asp-page="Create">Ny kund</a></p>
+<p>
+    <a class="btn btn-primary" asp-page="Create">Ny kund</a>
+    <a class="btn btn-primary" asp-page="/Addresses/Index">Adresser</a>
+</p>
+
 
 <table class="table">
     <thead>
@@ -26,9 +30,9 @@
             <td>@c.Email</td>   
             <td>@(c.Active ? "Ja" : "Nej")</td>
             <td>
-                <a asp-page="Details" asp-route-id="@c.CustomerId">Visa</a>
-                <a asp-page="Edit" asp-route-id="@c.CustomerId">Redigera</a>
-            <a asp-page="Delete" asp-route-id="@c.CustomerId">Ta bort</a>
+                <a asp-page="Details" class="small-link" asp-route-id="@c.CustomerId">Visa</a> |
+                <a asp-page="Edit" class="small-link" asp-route-id="@c.CustomerId">Redigera</a> |
+                <a asp-page="Delete" class="small-link" asp-route-id="@c.CustomerId">Ta bort</a>
             </td>
             </tr>
         }

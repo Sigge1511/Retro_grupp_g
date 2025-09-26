@@ -1,0 +1,44 @@
+﻿@page
+@model Retro_grupp_g.Pages.TopListsModel
+@{
+    ViewData["Title"] = "Topplistor";
+}
+
+<h2>Mest uthyrda filmer</h2>
+<div class="dashboard-grid">
+@foreach (var category in Model.StaticTopLists)
+{
+    <section>
+        <div class="dashboard-toplist">
+        <ol>
+            <label class="form-label2">@category.CategoryName</label>
+            <br>
+            @foreach (var film in category.TopFilms)
+            {
+                <li>@film.Title</li>
+            }
+        </ol>
+        </div>
+    </section>
+    }
+</div>
+
+<h3>Visa från ytterligare genre</h3>
+<form method="get" action="#selected-category">
+    <label for="category">Välj kategori:</label>
+    <select asp-for="SelectedCategoryId" asp-items="Model.OtherCategories"></select>
+    <button type="submit">Visa</button>
+</form>
+
+@if (Model.SelectedCategoryTopList != null)
+{
+    <section id="selected-category">
+        <label class="form-label2">@Model.SelectedCategoryTopList.CategoryName</label>
+        <ol>
+            @foreach (var film in Model.SelectedCategoryTopList.TopFilms)
+            {
+                <li>@film.Title</li>
+            }
+        </ol>
+    </section>
+}
