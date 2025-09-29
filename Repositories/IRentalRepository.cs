@@ -32,12 +32,13 @@ namespace Retro_grupp_g.Repositories
 
 //********************** SKADAD RETUR/BORTTAPPAD **********************************************************
         Task<(bool Found, int RentalId, int CustomerId, string CustomerName,
-                          string FilmTitle, ushort FeeAmount)> GetReplaceFeePreviewByInventoryAsync(int inventoryId);
+            string FilmTitle, ushort FeeAmount)> GetReplaceFeePreviewByInventoryAsync(int inventoryId);
+
+        Task<(bool Success, ushort FeeAmount)>
+            ReplaceFilmRealAsync(int inventoryId, int customerId);
 
 
-
-
-//***************   Hjälpmetoder
+        //***************   Hjälpmetoder
         Task<Rental?> GetOpenRentalByInventoryAsync(int inventoryId);
         Task<Rental?> GetOpenRentalByIdAsync(int rentalId);
 

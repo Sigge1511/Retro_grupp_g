@@ -92,7 +92,7 @@ namespace Retro_grupp_g.Pages.Rentals
             }
         }
 
-        //*************** POST SEN RETUR *************************
+//*************** POST SEN RETUR *************************
         public async Task<IActionResult> OnPostReturnLateAsync()
         {
             if (SelectedInventoryId <= 0 || SelectedCustomerId <= 0)
@@ -122,10 +122,9 @@ namespace Retro_grupp_g.Pages.Rentals
             // VIKTIGT: Vi omdirigerar nu till Fee-sidan och skickar med RentalId i URL:en
             return RedirectToPage("/Rentals/Fee", new { rentalId = preview.RentalId });
         }
-
-        //Task för att ta betalt för skadad film och ropa på RentalRepository
-
-        public async Task<IActionResult> OnPostReplaceAsync()
+//**************     POST REPLACE **************
+       
+        public async Task<IActionResult> OnPostReplaceFilmAsync()
         {
             if (SelectedInventoryId <= 0 || SelectedCustomerId <= 0)
             {
@@ -133,16 +132,27 @@ namespace Retro_grupp_g.Pages.Rentals
                 await OnGetAsync();
                 return Page();
             }
-            // Vi anropar denna metod för att hämta info om en ev. skadad retur
+
+            // Vi anropar preview-metoden ENBART för att se om uthyrningen finns,
+            // men vi behöver inte använda resultatet i omdirigeringen.
             var preview = await _rentalRepository.GetReplaceFeePreviewByInventoryAsync(SelectedInventoryId);
+
             if (!preview.Found)
             {
-                TempData["Msg"] = "Ingen öppen uthyrning hittades för vald film.";
-                await OnGetAsync();
-                return Page();
+                
+                if (!preview.Found)
+                {
+                    TempData["Msg"] = "Ingen öppen uthyrning hittades för vald film.";
+                    await OnGetAsync();
+                    return Page();
+                }
             }
-            // VIKTIGT: Vi omdirigerar nu till Fee-sidan och skickar med RentalId i URL:en
-            return RedirectToPage("/Rentals/ReplaceFilm", new { rentalId = preview.RentalId });
+            return RedirectToPage("/Rentals/ReplaceFilm", new
+            {
+                selectedInventoryId = SelectedInventoryId,
+                selectedCustomerId = SelectedCustomerId
+            });
+            
         }
 
         //****************

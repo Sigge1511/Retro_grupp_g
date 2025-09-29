@@ -17,46 +17,104 @@ namespace Retro_grupp_g.Pages.Rentals
         public int RentalId { get; set; }
         public string FilmTitle { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;
-        // Använder den korrekta typen för ReplacementCost
-        public decimal ReplacementCost { get; set; }                
+        public decimal ReplacementCost { get; set; }
+        public bool IsReal { get; set; }
+        //-----------
         public ReplaceFilmModel(IRentalRepository rentalRepository, ICustomerRepository customerRepository)
         {
             _rentalRepository = rentalRepository;
             _customerRepository = customerRepository;
         }
-
-        public async Task<IActionResult> OnGetAsync()
+        //-----------
+        public async Task<IActionResult> OnGetAsync(int selectedInventoryId, int selectedCustomerId)
         {
-            // Validera att vi har ett InventoryId
-            if (SelectedInventoryId <= 0)
+            // LÄSER IN ID:N FRÅN URL:en OCH SÄTTER DE PUBLIKA EGENSKAPERNA
+            SelectedInventoryId = selectedInventoryId;
+            SelectedCustomerId = selectedCustomerId;
+
+            // 1. Validera att vi har båda ID:na
+            if (SelectedInventoryId <= 0 || SelectedCustomerId <= 0)
             {
-                TempData["Msg"] = "Något blev fel, försök igen.";
-                return RedirectToPage("/Rentals/Return"); // Omdirigera till sök-sidan
+                TempData["Msg"] = "Kritiska data saknas. Kontrollera kund- och inventarie-ID.";
+                return RedirectToPage("/Rentals/Return"); 
             }
 
-            // 1. Hämta preview-data från Repository
+            // 2. Hämta preview-data från Repository (använder SelectedInventoryId)
             var (found, rentalId, customerId, customerName, filmTitle, feeAmount) =
                 await _rentalRepository.GetReplaceFeePreviewByInventoryAsync(SelectedInventoryId);
-            // 2. Fyll de publika egenskaperna
+
+            // 3. Fyll de publika egenskaperna
             Found = found;
             if (Found)
             {
                 RentalId = rentalId;
-                // Vi sparar det faktiska kund-ID:t för att jämföra i POST-steget
-                SelectedCustomerId = customerId;
                 CustomerName = customerName;
                 FilmTitle = filmTitle;
-                // Använd filmens kostnad som avgiften
                 ReplacementCost = (decimal)feeAmount;
+
+                // Jämför DB:s kund-ID (customerId) mot det valda kund-ID:t (SelectedCustomerId)
+                IsReal = customerId == SelectedCustomerId;
             }
             else
             {
-                TempData["Msg"] = "Kunde inte hitta någon pågående uthyrning för det angivna inventarie-ID:t.";
+                // VIKTIGT: Ingen omdirigering här, vi stannar på sidan för att visa meddelande
+                TempData["Msg"] = "Ingen pågående uthyrning hittades för det angivna inventarie-ID:t.";
+            }
+
+            return Page();
+        }
+        //**********************  POST  REPLACE **************************************
+
+        public async Task<IActionResult> OnPostConfirmReplaceAsync()
+        {
+            // 1. Initial validering av indata
+            if (RentalId <= 0 || SelectedInventoryId <= 0 || SelectedCustomerId <= 0)
+            {
+                TempData["Msg"] = "Kritiska data saknas för att bekräfta ersättningen. Försök igen.";
                 return RedirectToPage("/Rentals/Return");
             }
 
-            // Visa sidan med preview-datan
-            return Page();
+            // 2. Hämta data IGEN (Preview) för att få aktuellt kund-ID och avgift (ReplacementCost)
+            // Denna anropar GetReplaceFeePreviewByInventoryAsync som hämtar ReplacementCost
+            var (foundPreview, actualRentalId, actualCustomerId, actualCustomerName, filmTitle, feeAmount) =
+                 await _rentalRepository.GetReplaceFeePreviewByInventoryAsync(SelectedInventoryId);
+
+            if (!foundPreview)
+            {
+                TempData["Msg"] = "Kunde inte hitta uthyrning att ersätta under bekräftelse.";
+                return RedirectToPage("/Rentals/Return");
+            }
+
+            // 3. AFFÄRSLOGIK: Kontrollera om det är rätt kund (likt FeeModel)
+            // Jämför kund-ID från DB (actualCustomerId) med ID från formuläret (SelectedCustomerId)
+            bool isReal = actualCustomerId == SelectedCustomerId;
+
+            // 4. BARA ANROPA REPO OM ÄKTA
+            if (isReal)
+            {
+                // Anropa Repot för att utföra transaktionen.
+                // Repot är nu rent och utgår från att validering har skett
+                var (success, finalFeeAmount) =
+                    await _rentalRepository.ReplaceFilmRealAsync(SelectedInventoryId, SelectedCustomerId);
+
+                if (success)
+                {
+                    TempData["Msg"] = $"Ersättning för film registrerad. Avgift: ${finalFeeAmount:0.00}. Filmen är nu borttagen från lagret.";
+                }
+                else
+                {
+                    TempData["Msg"] = "Ett oväntat fel uppstod under databasuppdateringen.";
+                }
+            }
+            else
+            {
+                // 5. Felmeddelande om ej äkta (likt FeeModel)
+                TempData["Msg"] = $"Ej rätt kund ({actualCustomerName}) som gör ersättningen. Avgiften är ${feeAmount:0.00}. Ingen ändring har sparats i databasen.";
+            }
+
+            return RedirectToPage("/Rentals/Return");
         }
+
+
     }
 }

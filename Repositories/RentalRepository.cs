@@ -145,7 +145,7 @@ namespace Retro_grupp_g.Repositories
         }
 
 //********************** SENA RETURER **********************************************************
-        //GET
+        //GET        
         private static (int daysLate, ushort fee) CalcLateFee(DateOnly rentalDay, int rentalDurationDays)
         {
             var due = rentalDay.AddDays(rentalDurationDays);
@@ -293,7 +293,7 @@ namespace Retro_grupp_g.Repositories
             return (true, isLate, daysLate, due, result.FilmTitle, fee, isReal, (int)result.Rental.RentalId, $"{result.ActualCustomerFirstName} {result.ActualCustomerLastName}");
         }
 
-        //********************** SKADAD RETUR/BORTTAPPAD **********************************************************
+//********************** SKADAD RETUR/BORTTAPPAD **********************************************************
         //GET 
         public async Task<(bool Found, int RentalId, int CustomerId, string CustomerName,
                           string FilmTitle, ushort FeeAmount)> GetReplaceFeePreviewByInventoryAsync(int inventoryId)
@@ -326,12 +326,69 @@ namespace Retro_grupp_g.Repositories
         }
 
 
-        //POST
-        public Task ReturnDamagedAsync(int rentalId) => Task.CompletedTask;
+        public async Task<(bool Success, ushort FeeAmount)>
+                           ReplaceFilmRealAsync(int inventoryId, int customerId)
+        {
+            var inv = (uint)inventoryId;
+            var cid = (ushort)customerId; // Vi använder cid i Payment, men validerar det inte här
+
+            // 1. Hämta all nödvändig information i en enda query
+            var result = await _db.Rentals
+                .AsNoTracking()
+                .Where(r => r.InventoryId == inv && r.ReturnDate == null)
+                .Select(r => new
+                {
+                    Rental = r,
+                    ReplacementCost = r.Inventory.Film.ReplacementCost,
+                })
+                .FirstOrDefaultAsync();
+
+            if (result is null)
+                return (false, 0); // Hyran hittades inte
+
+            ushort fee = (ushort)result.ReplacementCost;
+
+            // 2. Utför transaktionen:
+            // Stäng hyran, Skapa betalning, Ta bort ur Inventory
+
+            // 2.1. Hämta Rental och Inventory för spårning/ändring
+            var rentalToUpdate = await _db.Rentals
+                .FirstOrDefaultAsync(r => r.RentalId == result.Rental.RentalId);
+            var inventoryToRemove = await _db.Inventories
+                .FirstOrDefaultAsync(i => i.InventoryId == inv);
+
+            // Dubbelkoll för säkerhets skull
+            if (rentalToUpdate is null || inventoryToRemove is null)
+                return (false, fee);
+
+            // 2.2. Stäng hyran
+            rentalToUpdate.ReturnDate = DateTime.UtcNow;
+            rentalToUpdate.LastUpdate = DateTime.UtcNow;
+
+            // 2.3. Skapa Betalning
+            var payment = new Payment
+            {
+                CustomerId = rentalToUpdate.CustomerId,
+                StaffId = rentalToUpdate.StaffId,
+                RentalId = rentalToUpdate.RentalId,
+                Amount = fee,
+                PaymentDate = DateTime.UtcNow
+            };
+            _db.Payments.Add(payment);
+
+            // 2.4. Ta bort Inventory-posten
+            _db.Inventories.Remove(inventoryToRemove);
+
+            // 3. Spara ändringarna och bekräfta
+            await _db.SaveChangesAsync();
+
+            // 4. Återgå med bekräftelse på att det lyckades
+            return (true, fee);
+        }
 
 
 
-//********************** HJÄLPMETODER **********************************************************
+        //********************** HJÄLPMETODER **********************************************************
         public Task<Rental?> GetOpenRentalByInventoryAsync(int inventoryId)
         {
             var inv = (uint)inventoryId;

@@ -1,5 +1,70 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@page
+@model Retro_grupp_g.Pages.Rentals.ReplaceFilmModel
 @{
+    ViewData["Title"] = "Ersätta skadad eller saknad film";
+}
+
+<h2>Ersätta skadad eller saknad film</h2>
+
+@* 1. Visa meddelanden från TempData *@
+@if (TempData["Msg"] is string msg)
+{
+    <div class="alert alert-info" id="serverMsg">@msg</div>
+}
+
+@* 2. Visa informationen om filmen, endast om den hittades i OnGetAsync *@
+@if (Model.Found)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Film (Inventarie-ID)</dt>
+                <dd class="col-sm-9">@Model.FilmTitle (@Model.SelectedInventoryId)</dd>
+
+                <dt class="col-sm-3">Uthyrd till kund</dt>
+                <dd class="col-sm-9">@Model.CustomerName (@Model.SelectedCustomerId)</dd>
+
+                <dt class="col-sm-3">Ersättningskostnad (Avgift)</dt>
+                <dd class="col-sm-9 text-danger font-weight-bold">
+                    $@Model.ReplacementCost.ToString("0.00")
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    @* 3. Varning om det är fel kund (Behöver IsReal egenskapen som vi lade till) *@
+    @if (!Model.IsReal)
+    {
+        <div class="alert alert-warning">
+            Ej rätt kund som gör ersättningen. Ingen ändring kommer att sparas i databasen om du bekräftar.
+        </div>
+    }
+
+    @* 4. Formulär för BEKRÄFTELSE och AVBRYT *@
+    <form method="post">
+        @* Dolda fält för att skicka tillbaka de kritiska ID:na till OnPostConfirmReplaceAsync *@
+        <input type="hidden" asp-for="RentalId" />
+        <input type="hidden" asp-for="SelectedInventoryId" />
+        <input type="hidden" asp-for="SelectedCustomerId" />
+
+        @* Knapp 1: Bekräfta Ersättning *@
+        <button type="submit"
+                class="btn btn-secondary btn-lg me-3"
+                asp-page-handler="ConfirmReplace">
+            Ta betalt + Ta bort filmen från lagret
+        </button>
+
+        @* Knapp 2: Avbryt och Återgå *@
+        <a class="btn btn-primary btn-lg" asp-page="/Rentals/Return">
+            <i class="fa fa-undo"></i> Avbryt och Återgå
+        </a>
+    </form>
+}
+else
+{
+    @* Visa om Found är false *@
+    <div class="alert alert-info">
+        Ett fel uppstod. Vänligen sök igen.
+    </div>
+    <a class="btn btn-secondary mt-3" asp-page="/Rentals/Return">Återgå till retursida</a>
 }

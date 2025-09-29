@@ -177,12 +177,20 @@ p {
     }
 
 .btn-warning {
-    background-color: #ffd994;
+    background-color: #c16e1a;
+    font-family: 'Visby Regular';
+    font-weight: 500;
     font-size: 2rem;
-    color: black;
+    color: white;
+}
+.btn-warning:hover {
+    background-color: #984c00;
+        color: white;
+
 }
 btn-danger {
-    background-color: #dc3c22;
+    background-color: #a35307;
+    font-family: 'Visby Regular';
     font-size: 2rem;
 }
 
