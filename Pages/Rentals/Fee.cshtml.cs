@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Retro_grupp_g.Models;
 using Retro_grupp_g.Repositories;
 
 namespace Retro_grupp_g.Pages.Rentals
@@ -75,28 +76,68 @@ namespace Retro_grupp_g.Pages.Rentals
         // POST LATE
         public async Task<IActionResult> OnPostReturnLateAsync()
         {
-            // Din logik för att kontrollera ID:n
-            if (RentalId <= 0 || InventoryId <= 0 || CustomerId <= 0)
+            // Steg 1: Grundläggande validering och hämtning av session-ID.
+            if (InventoryId <= 0 || CustomerId <= 0)
             {
                 TempData["Msg"] = "Ogiltiga data vid bekräftelse.";
-                return RedirectToPage("/Rentals/Return");
+                return Page();
             }
 
-            // Nu kommer dekonstruktionen att fungera
-            var (found, isLate, daysLate, dueDate, filmTitle, feeAmount, isReal, rentalId, actualCustomerName) =
-                await _rentalRepository.ReturnLateRealAsync(InventoryId, CustomerId);
+            var staffId = HttpContext.Session.GetInt32("StaffId");
+            var storeId = HttpContext.Session.GetInt32("StoreId");
 
-            // Hantera meddelanden baserat på 'isReal'
-            if (isReal)
+            if (!staffId.HasValue || !storeId.HasValue)
             {
-                TempData["Msg"] = $"Sen retur registrerad. Avgift: ${feeAmount:0.00}.";
+                TempData["Msg"] = "Sessionen har gått ut. Vänligen logga in igen.";
+                return RedirectToPage("/Login");
+            }
+
+            // Steg 2: Kolla om det är en mock-retur baserat på om IsReal-egenskapen är false.
+            // Vi litar på att OnGet har satt denna egenskap korrekt.
+            if (!IsReal)
+            {
+                // Om det är en mock-retur, sätt meddelandet du vill ha,
+                // baserat på den information som redan finns i modellen.
+                TempData["Msg"] = $"Ej rätt kund som gör retur. Avgiften är ${FeeAmount:0.00}. Ingen ändring har sparats i databasen.";
             }
             else
             {
-                TempData["Msg"] = $"Ej rätt kund som gör retur. Avgiften är ${feeAmount:0.00}. Ingen ändring har sparats i databasen.";
+                // För en skarp retur, hämta färsk data från databasen.
+                var rentalDetails = await _rentalRepository.GetLateFeePreviewByRentalIdAsync(RentalId);
+
+                if (!rentalDetails.Found)
+                {
+                    TempData["Msg"] = "Uthyrningen hittades inte.";
+                    return Page();
+                }
+
+                // Fyll model-egenskaperna med färsk data för att sidan ska kunna renderas korrekt.
+                FilmTitle = rentalDetails.FilmTitle;
+                ActualCustomerName = rentalDetails.CustomerName;
+                RentalDate = rentalDetails.RentalDate;
+                DueDate = rentalDetails.DueDate;
+                DaysLate = rentalDetails.DaysLate;
+                FeeAmount = (decimal)rentalDetails.FeeAmount;
+                this.CustomerId = rentalDetails.CustomerId;
+                this.InventoryId = rentalDetails.InventoryId;
+
+                var success = await _rentalRepository.ReturnLateRealAsync(InventoryId, CustomerId, staffId.Value, storeId.Value);
+
+                if (success)
+                {
+                    TempData["Msg"] = $"Sen retur registrerad. Avgift: ${FeeAmount:0.00}.";
+                    // Omdirigera till samma sida för att rensa post-anropet.
+                    return RedirectToPage("/Rentals/Fee", new { RentalId = RentalId, CustomerId = CustomerId, InventoryId = InventoryId });
+                }
+                else
+                {
+                    TempData["Msg"] = "Ett fel uppstod vid registrering av returen.";
+                    return Page();
+                }
             }
 
-            return RedirectToPage("/Rentals/Return");
+
+            return RedirectToPage("/Rentals/Fee", new { RentalId = RentalId });
         }
     }
 }

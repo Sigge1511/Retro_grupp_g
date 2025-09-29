@@ -6,10 +6,7 @@
 
 <h2>Sen retur – avgift</h2>
 
-@if (TempData["Msg"] is string msg)
-{
-    <div class="alert alert-info" id="serverMsg">@msg</div>
-}
+
 
 <div class="card mb-3">
   <div class="card-body">
@@ -38,18 +35,16 @@
   </div>
 </div>
 
-@if (!Model.IsReal)
+@if (TempData["Msg"] is string msg)
 {
-  <div class="alert alert-warning">
-    Ej rätt kund som gör retur. Ingen ändring kommer att sparas.
-  </div>
+    <div class="alert alert-info" id="serverMsg">@msg</div>
 }
 
 <form method="post">
   <input type="hidden" asp-for="RentalId" />
   <input type="hidden" asp-for="InventoryId" />
   <input type="hidden" asp-for="CustomerId" />
-
+  <input type="hidden" asp-for="IsReal" /> @* Kollar från onget om det är skarpt eller mock *@
 <button type="submit"
     class="btn btn-warning me-2"
     asp-page-handler="ReturnLate"
