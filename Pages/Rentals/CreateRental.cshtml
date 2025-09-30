@@ -44,7 +44,7 @@
 
 <hr />
 
-@if (Model.Filmer.Any())
+@if (Model.Films.Any())
 {
     <table>
         <thead>
@@ -60,7 +60,7 @@
         </thead>
         
         <tbody>
-            @foreach (var film in Model.Filmer)
+            @foreach (var film in Model.Films)
             {
                 <tr>
             <td>@film.Title</td>
