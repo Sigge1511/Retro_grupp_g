@@ -30,7 +30,10 @@ namespace Retro_grupp_g.Repositories
         public async Task DeleteAsync(int id)
         {
             var f = await GetByIdAsync(id);
-            if (f != null) _db.Films.Remove(f);
+            if (f != null)
+            {
+                _db.Films.Remove(f);
+            }
         }
 
         public Task SaveAsync() => _db.SaveChangesAsync();
