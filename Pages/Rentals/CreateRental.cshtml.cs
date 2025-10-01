@@ -22,7 +22,7 @@ namespace Retro_grupp_g.Pages
         public string SearchDirector => Request.Query["SearchDirector"];
         public string SearchGenre => Request.Query["SearchGenre"];
 
-        public List<FilmViewModel> Filmer { get; set; } = new();
+        public List<FilmViewModel> Films { get; set; } = new();
         public List<CustomerViewModel> Customers { get; set; } = new();
 
         public List<StaffViewModel> StaffMembers { get; set; } = new();
@@ -61,7 +61,7 @@ namespace Retro_grupp_g.Pages
             if (!hasSearch)
             {
                 // Visa ingen film om ingen sökning gjorts (för att undvika lång laddning)
-                Filmer = new List<FilmViewModel>();
+                Films = new List<FilmViewModel>();
                 return;
             }
 
@@ -91,14 +91,14 @@ namespace Retro_grupp_g.Pages
                     g.Category.Name.Contains(SearchGenre)));
             }
 
-            var filmer = await query.Take(50).ToListAsync();//Tillagt
+            var films = await query.Take(50).ToListAsync();//Tillagt
 
 
             //Lägg till regissörsök
 
             
 
-            Filmer = filmer.Select(f => new FilmViewModel
+            Films = films.Select(f => new FilmViewModel
             {
                 FilmId = f.FilmId,
                 Title = f.Title,
