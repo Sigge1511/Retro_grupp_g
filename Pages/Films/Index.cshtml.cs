@@ -7,25 +7,24 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
 using Retro_grupp_g.Models;
+using Retro_grupp_g.Repositories;
 
 namespace Retro_grupp_g.Pages.Films
 {
     public class IndexModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
+        private readonly IFilmRepository _filmRepository;
 
-        public IndexModel(Retro_grupp_g.Data.SakilaDbContext context)
+        public IndexModel(IFilmRepository filmRepository)
         {
-            _context = context;
+            _filmRepository = filmRepository;
         }
 
         public IList<Film> Film { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            Film = await _context.Films
-                .Include(f => f.Language)
-                .Include(f => f.OriginalLanguage).ToListAsync();
+            Film = await _filmRepository.GetAllWithLanguagesAsync();
         }
     }
 }

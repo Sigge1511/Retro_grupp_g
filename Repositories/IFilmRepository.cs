@@ -10,6 +10,7 @@ namespace Retro_grupp_g.Repositories
         Task UpdateAsync (Film film);
         Task DeleteAsync (int id);
         Task SaveAsync ();
+        Task<List<Film>> GetAllWithLanguagesAsync();
 
     }
 }

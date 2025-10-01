@@ -35,5 +35,13 @@ namespace Retro_grupp_g.Repositories
 
         public Task SaveAsync() => _db.SaveChangesAsync();
 
+        public async Task<List<Film>> GetAllWithLanguagesAsync()
+        {
+            return await _db.Films
+                .Include(f => f.Language)
+                .Include(f => f.OriginalLanguage)
+                .ToListAsync();
+        }
+
     }
 }
