@@ -8,15 +8,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
 using Retro_grupp_g.Models;
+using Retro_grupp_g.Repositories;
 
 namespace Retro_grupp_g.Pages.Films
 {
     public class EditModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
+        private readonly IFilmRepository _filmRepository;
+        private readonly SakilaDbContext _context; //för dropdowns, actor och categories
 
-        public EditModel(Retro_grupp_g.Data.SakilaDbContext context)
+        public EditModel(IFilmRepository filmRepository, SakilaDbContext context)
         {
+            _filmRepository = filmRepository;
             _context = context;
         }
 
@@ -32,7 +35,7 @@ namespace Retro_grupp_g.Pages.Films
                 return NotFound();
             }
 
-            var film =  await _context.Films.FirstOrDefaultAsync(m => m.FilmId == id);
+            var film = await _filmRepository.GetByIdAsync(id.Value);
             if (film == null)
             {
                 return NotFound();
@@ -43,6 +46,10 @@ namespace Retro_grupp_g.Pages.Films
                 .Include(f => f.FilmActors)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(f => f.FilmId == id);
+            if (Film == null)
+            {
+                return NotFound();
+            }
 
             // Förifyll valda ID:n från join-tabellerna
             SelectedCategoryIds = Film.FilmCategories.Select(fc => (int)fc.CategoryId).ToList();
@@ -95,8 +102,7 @@ namespace Retro_grupp_g.Pages.Films
             return SelectedActorIds;
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
+
         public async Task<IActionResult> OnPostAsync(int id, List<int> selectedActorIds)
         {
             var film = await _context.Films
@@ -146,7 +152,7 @@ namespace Retro_grupp_g.Pages.Films
             foreach (var actorId in toAddActorIds)
                 _context.FilmActors.Add(new FilmActor { FilmId = film.FilmId, ActorId = actorId });
 
-            await _context.SaveChangesAsync();
+            await _filmRepository.SaveAsync();
             return RedirectToPage("./Index");
         }
 

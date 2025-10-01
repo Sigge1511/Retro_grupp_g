@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
 using Retro_grupp_g.Models;
+using Retro_grupp_g.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +14,14 @@ namespace Retro_grupp_g.Pages.Films
 {
     public class CreateModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
+        private readonly IFilmRepository _filmRepository;
+        private readonly SakilaDbContext _context; //för dropdowns
         [BindProperty] public List<int> SelectedActorIds { get; set; } = new();
         [BindProperty] public List<int> SelectedCategoryIds { get; set; } = new();
 
-        public CreateModel(Retro_grupp_g.Data.SakilaDbContext context)
+        public CreateModel(IFilmRepository filmRepository, SakilaDbContext context)
         {
+            _filmRepository = filmRepository;
             _context = context;
         }
 
@@ -65,7 +68,6 @@ namespace Retro_grupp_g.Pages.Films
         [BindProperty]
         public Film Film { get; set; } = default!;
 
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
@@ -74,11 +76,9 @@ namespace Retro_grupp_g.Pages.Films
                 return Page();
             }
 
-
-
             // Spara filmen först
-            _context.Films.Add(Film);
-            await _context.SaveChangesAsync();
+            await _filmRepository.AddAsync(Film);
+            await _filmRepository.SaveAsync();
 
             // Lägg till alla valda skådisar
             if (SelectedActorIds?.Any() == true)
@@ -107,9 +107,9 @@ namespace Retro_grupp_g.Pages.Films
                         CategoryId = (byte)catId // om CategoryId är byte; annars ta bort cast
                     });
                 }
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
     }

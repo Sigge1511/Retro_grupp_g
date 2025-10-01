@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
 using Retro_grupp_g.Models;
+using Retro_grupp_g.Repositories;
 
 namespace Retro_grupp_g.Pages.Films
 {
     public class DeleteModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
+        private readonly IFilmRepository _filmRepository;
 
-        public DeleteModel(Retro_grupp_g.Data.SakilaDbContext context)
+        public DeleteModel(IFilmRepository filmRepository)
         {
-            _context = context;
+            _filmRepository = filmRepository;
         }
 
         [BindProperty]
@@ -29,7 +30,7 @@ namespace Retro_grupp_g.Pages.Films
                 return NotFound();
             }
 
-            var film = await _context.Films.FirstOrDefaultAsync(m => m.FilmId == id);
+            var film = await _filmRepository.GetByIdAsync(id.Value);
 
             if (film == null)
             {
@@ -49,13 +50,8 @@ namespace Retro_grupp_g.Pages.Films
                 return NotFound();
             }
 
-            var film = await _context.Films.FindAsync(id);
-            if (film != null)
-            {
-                Film = film;
-                _context.Films.Remove(Film);
-                await _context.SaveChangesAsync();
-            }
+            await _filmRepository.DeleteAsync(id.Value);
+            await _filmRepository.SaveAsync();
 
             return RedirectToPage("./Index");
         }
