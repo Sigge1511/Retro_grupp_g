@@ -3,6 +3,12 @@
 @{
 }
 
+@if (TempData["Message"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+
+
 <h1>Kunder</h1>
 
 <p>
