@@ -34,7 +34,7 @@
 
 
 
-/****************************************************LÃ„NKAR****************************************************/
+/****************************************************LÄNKAR****************************************************/
 
 .small-link {
     color: #831f00;
@@ -192,7 +192,7 @@ btn-danger {
     font-size: 2rem;
 }
 
-/****************************************************FORMULÃ„R &co****************************************************/
+/****************************************************FORMULÄR &co****************************************************/
 .form-control {
     font-size: 1.2rem; /* Ã¶ka textstorleken */
     padding: 0.6rem 0.6rem; /* lite mer luft */
@@ -212,22 +212,31 @@ btn-danger {
 }
 
 .actor-box {
-    max-height: 420px; /* gÃ¶r listan rullbar om den blir lÃ¥ng */
-
-    width: 100%; /* fyller hela tillgÃ¤ngliga ytan */
-    min-width: 600px; /* ser till att 3 kolumner inte blir fÃ¶r smala */
+    max-height: 420px;
+    width: 100%;
+    /* Ta bort min-width: 600px; - Den kan begränsa layouten */
     overflow-y: auto;
-    border: 1px solid #e5e7eb; /* ljus ram */
-    border-radius: .75rem; /* rundade hÃ¶rn */
+    border: 1px solid #e5e7eb;
+    border-radius: .75rem;
     padding: .75rem;
     background: #fff;
 }
 
 .actor-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* exakt 3 kolumner */
-    gap: .5rem .75rem; /* mellanrum mellan rutorna */
+    /* Använder minmax för att säkerställa att kolumnerna alltid är minst 200px breda, men expanderar till 1fr */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: .5rem .75rem;
+    width: 100%;
 }
+
+    .actor-grid .form-check {
+        /* NYTT: Förhindra att texten inuti bryts över flera rader */
+        white-space: nowrap;
+        /* NYTT: Lägg till overflow och text-overflow för att hantera superlånga namn */
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
 
 .page {

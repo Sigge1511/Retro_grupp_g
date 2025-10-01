@@ -21,32 +21,36 @@
     <p style="color: green;">@TempData["Success"]</p>
 }
 
+<br>
 <form method="get">
 	<div>
-		<label for="SearchTitle">Filmtitel</label>
+		<label for="SearchTitle" class="form-label">Filmtitel:</label>
 		<input type="text" name="SearchTitle" value="@Model.SearchTitle"/>
 	</div>
-
+    <br>
     <div>
-        <label for="SearchActor">Skådespelare:</label>
+        <label for="SearchActor" class="form-label">Skådespelare:</label>
         <input type="text" name="SearchActor" value="@Model.SearchActor" />
     </div>
+    <br>
     <div>
-        <label for="SearchDirector">Regissör:</label>
+        <label for="SearchDirector" class="form-label">Regissör:</label>
         <input type="text" name="SearchDirector" value="@Model.SearchDirector" />
     </div>
+    <br>
     <div>
-        <label for="SearchGenre">Genre:</label>
+        <label for="SearchGenre" class="form-label">Genre:</label>
         <input type="text" name="SearchGenre" value="@Model.SearchGenre" />
     </div>
-    <button type="submit">Sök</button>
+    <br>
+    <button type="submit" class="btn btn-primary">Sök</button>
 </form>
 
 <hr />
 
 @if (Model.Filmer.Any())
 {
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>Titel</th>
@@ -75,8 +79,14 @@
                     {
                         <form method="post" asp-page-handler="Rent">
                                 <input type="hidden" name="FilmId" value="@film.FilmId" />
+
+                              @*   <div class="form-group">
+                                    <label class="form-label">Åldersgräns/Rating:</label>
+                                    <select asp-for="Film.Rating" class="form-control" asp-items="ViewBag.Rating"></select>
+                                </div> *@
+                                
                                 <select name="SelectedCustomerId" required>
-                                    <option value="">Välj kund</option>
+                                    <option value="" class="form-label">Välj kund</option>
                                     @foreach (var customer in Model.Customers)
                                     {
                                         <option value="@customer.CustomerId">@customer.Name</option>
@@ -100,7 +110,7 @@
                 {
                     <form method="post" asp-page-handler="Return">
                         <input type="hidden" name="FilmId" value="@film.FilmId" />
-                        <button type="submit">Återlämna</button>
+                        <button type="submit" class="btn btn-primary">Återlämna</button>
                     </form>
                 }
             </td>

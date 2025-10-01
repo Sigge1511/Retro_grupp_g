@@ -14,58 +14,58 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <p>Filmens titel:</p>
+                <label class="form-label">Filmens titel:</label>
                 <input asp-for="Film.Title" class="form-control" />
                 <span asp-validation-for="Film.Title" class="text-danger"></span>
             </div>
             <br>
             <div class="form-group">
-                <p>År filmen hade premiär:</p>
+                <label class="form-label">År filmen hade premiär:</label>
                 <input asp-for="Film.ReleaseYear" class="form-control" />
                 <span asp-validation-for="Film.ReleaseYear" class="text-danger"></span>
             </div>
             <br>
             <div class="form-group">
-                <p>Filmens beskrivning:</p>
+                <label class="form-label">Filmens beskrivning:</label>
                 <textarea asp-for="Film.Description" class="form-control"></textarea> 
                 <span asp-validation-for="Film.Description" class="text-danger"></span>
             </div>
             <br>
             <div class="form-group">
-                <p>Språk:</p>
+                <label class="form-label">Språk:</label>
                 <select asp-for="Film.LanguageId" class="form-control" asp-items="ViewBag.LanguageId"></select>
             </div>
             <br>
             <div class="form-group">
-                <p>Orginalspråk:</p>
+                <label class="form-label">Orginalspråk:</label>
                 <select asp-for="Film.OriginalLanguageId" class="form-control" asp-items="ViewBag.OriginalLanguageId"></select>
             </div>
             <br>
             <div class="form-group">
-                <p>Kostnad att hyra - per dag:</p>
+                <label class="form-label">Kostnad att hyra - per dag:</label>
                 <input asp-for="Film.RentalRate" class="form-control" />
                 <span asp-validation-for="Film.RentalRate" class="text-danger"></span>
             </div>
             <br>
             <div class="form-group">
-                <p>Filmens längd (i antal minuter):</p>
+                <label class="form-label">Filmens längd (i antal minuter):</label>
                 <input asp-for="Film.Length" class="form-control" />
                 <span asp-validation-for="Film.Length" class="text-danger"></span>
             </div>
             <br>
             <div class="form-group">
-                <p>Kostnad för att ersätta borttappat eller skadat exemplar:</p>
+                <label class="form-label">Kostnad för att ersätta borttappat eller skadat exemplar:</label>
                 <input asp-for="Film.ReplacementCost" class="form-control" />
                 <span asp-validation-for="Film.ReplacementCost" class="text-danger"></span>
             </div>
             <br>
             <div class="form-group">
-                <p>Åldersgräns/Rating:</p>
+                <label class="form-label">Åldersgräns/Rating:</label>
                 <select asp-for="Film.Rating" class="form-control" asp-items="ViewBag.Rating"></select>
             </div>
             <br>
             <div class="form-group">
-                <p>Extramaterial:</p>
+                <label class="form-label">Extramaterial:</label>
                 <input asp-for="Film.SpecialFeatures" class="form-control" />
                 <span asp-validation-for="Film.SpecialFeatures" class="text-danger"></span>
             </div>
@@ -84,7 +84,7 @@
             <div class="mt-3">
                 <label class="form-label">Skådespelare</label>
                 <div class="actor-box">
-                    <div class="actor-grid">
+                    <div class="actor-grid" style="width: 100%;">
                         @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.Actors)
                         {
                             <div class="form-check">
@@ -117,12 +117,7 @@
                     }
                 </div>
             </div>
-            <br>
-       @*      <div class="form-group">
-                <p>Vilken butiks inventarie filmen finns i:</p>
-                <select asp-for="Film.Inventories" class="form-control" asp-items="ViewBag.Store"></select>
-
-            </div> *@
+            <br>      
             <br>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Lägg till film</button>
@@ -130,11 +125,10 @@
         </form>
     </div>
 </div>
-
+<br>
 <div>
-    <a asp-page="Index">Tillbaka till startsidan</a>
-@*     Ska den peka mot någon menyöverblickssida? Eller kör vi att index är den menysidan?
- *@
+    <a asp-page="Index" class="btn btn-primary">Tillbaka till startsidan</a>
+
 </div>
 
 <script>

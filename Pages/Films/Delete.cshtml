@@ -10,6 +10,8 @@
 
 <h3>Är du säker på att du vill radera denna film?</h3>
 <div>
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -75,8 +77,8 @@
     </dl>
     
     <form method="post">
-        <input type="hidden" asp-for="Film.FilmId" />
-        <input type="submit" value="Delete" class="btn btn-secondary" /> 
+        <input type="hidden" name="id" value="@Model.Film.FilmId" />
+        <button type="submit" class="btn btn-secondary">Radera film</button>
     </form>
 </div><br>
-<a asp-page="./Index" class="btn btn-primary">Back to List</a>
+<a asp-page="./Index" class="btn btn-primary">Åter till listan</a>
