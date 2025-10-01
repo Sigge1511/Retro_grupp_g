@@ -62,7 +62,7 @@ namespace Retro_grupp_g.Pages.Customers
             {
                 await _repo.AddAsync(Customer);
                 await _repo.SaveAsync();
-                TempData["Message"] = $"Kunden {Customer.FirstName} {Customer.LastName} skapades.";
+                TempData["Message"] = $"Kunden {Customer.FirstName} {Customer.LastName} skapades!";
                 return RedirectToPage("Index");
             }
             catch (DbUpdateException ex)

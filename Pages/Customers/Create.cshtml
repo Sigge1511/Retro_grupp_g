@@ -3,6 +3,14 @@
 
 <h1>Ny kund</h1>
 
+@{
+    var flash = HttpContext.Request.Query["flash"].ToString();
+}
+@if (flash == "address_created")
+{
+    <div class="alert alert-success">Adressen skapades!</div>
+}
+
 @if (TempData["Error"] is string err)
 {
     <div class="alert alert-danger">@err</div>
@@ -15,16 +23,16 @@
 <form method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
 
-    <div class="mb-3">
-        <label asp-for="Customer.StoreId" class="form-label"></label>
+    <div class="mb-2">
+        <label asp-for="Customer.StoreId" class="form-label">Butik:</label>
         <select asp-for="Customer.StoreId" asp-items="Model.Stores" class="form-select">
             <option value="0">-- Välj butik --</option>
         </select>
         <span asp-validation-for="Customer.StoreId" class="text-danger"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Customer.AddressId" class="form-label"></label>
+    <div class="mb-2">
+        <label asp-for="Customer.AddressId" class="form-label">Adress:</label>
         <select asp-for="Customer.AddressId" asp-items="Model.Addresses" class="form-select">
             <option value="0">-- Välj adress --</option>
         </select>
@@ -35,21 +43,20 @@
             </a>
         </p>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="Customer.FirstName" class="form-label"></label>
+    <div class="mb-2">
+        <label asp-for="Customer.FirstName" class="form-label">Förnamn:</label>
         <input asp-for="Customer.FirstName" class="form-control" />
         <span asp-validation-for="Customer.FirstName" class="text-danger"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Customer.LastName" class="form-label"></label>
+    <div class="mb-2">
+        <label asp-for="Customer.LastName" class="form-label">Efternamn:</label>
         <input asp-for="Customer.LastName" class="form-control" />
         <span asp-validation-for="Customer.LastName" class="text-danger"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Customer.Email" class="form-label"></label>
+    <div class="mb-2">
+        <label asp-for="Customer.Email" class="form-label">E-post:</label>
         <input asp-for="Customer.Email" class="form-control" />
         <span asp-validation-for="Customer.Email" class="text-danger"></span>
     </div>

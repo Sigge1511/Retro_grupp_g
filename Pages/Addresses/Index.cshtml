@@ -4,6 +4,14 @@
     ViewData["Title"] = "Adresser";
 }
 
+@{
+    var flash = HttpContext.Request.Query["flash"].ToString();
+}
+@if (flash == "address_created")
+{
+    <div class="alert alert-success">Adressen skapades!</div>
+}
+
 <h1>Adresser</h1>
 
 <p>
