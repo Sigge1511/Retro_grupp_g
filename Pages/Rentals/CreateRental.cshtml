@@ -31,12 +31,7 @@
     <div>
         <label for="SearchActor" class="form-label">Skådespelare:</label>
         <input type="text" name="SearchActor" value="@Model.SearchActor" />
-    </div>
-    <br>
-    <div>
-        <label for="SearchDirector" class="form-label">Regissör:</label>
-        <input type="text" name="SearchDirector" value="@Model.SearchDirector" />
-    </div>
+    </div>      
     <br>
     <div>
         <label for="SearchGenre" class="form-label">Genre:</label>
@@ -50,76 +45,67 @@
 
 @if (Model.Filmer.Any())
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Titel</th>
-                <th>Beskrivning</th>
-                <th>Genre</th>
-                <th>Skådespelare</th>
-                <th>Tillgänglig</th>
-                <th>Hyr ut</th>
-                <th>Återlämna</th>
-            </tr>
-        </thead>
-        
-        <tbody>
-            @foreach (var film in Model.Filmer)
-            {
+    <div class="table-content">
+        <table class="table">
+            <thead>
                 <tr>
-            <td>@film.Title</td>
-            <td>@film.Description</td>
-            <td>@string.Join(", ", film.Genres)</td>
-            <td>@film.ActorSummary</td>
-            <td>
-                @(Model.IsAvailable(film.FilmId) ? "Ja" : "Nej")
-            </td>
-            <td>
-                    @if (Model.IsAvailable(film.FilmId))
-                    {
-                        <form method="post" asp-page-handler="Rent">
-                                <input type="hidden" name="FilmId" value="@film.FilmId" />
-
-                              @*   <div class="form-group">
-                                    <label class="form-label">Åldersgräns/Rating:</label>
-                                    <select asp-for="Film.Rating" class="form-control" asp-items="ViewBag.Rating"></select>
-                                </div> *@
-                                
-                                <select name="SelectedCustomerId" required>
-                                    <option value="" class="form-label">Välj kund</option>
-                                    @foreach (var customer in Model.Customers)
-                                    {
-                                        <option value="@customer.CustomerId">@customer.Name</option>
-                                    }
-                                </select>
-                                <select name="SelectedStaffId" required>
-                                    <option value="">Välj personal</option>
-                                    @foreach (var staff in Model.StaffMembers)
-                                    {
-                                        <option value="@staff.StaffId">@staff.Name</option>
-                                    }
-                                </select>
-                                <button type="submit">Hyra</button>
-                                </form>
-                    }
-
-                </td>
-
-            <td>
-                @if (!Model.IsAvailable(film.FilmId))
+                    <th>Titel</th>
+                    <th>Beskrivning</th>
+                    <th>Genre</th>
+                    <th>Skådespelare</th>
+                    <th>Tillgänglig</th>
+                    <th>Hyr ut</th>
+                    <th>Återlämna</th>
+                </tr>
+            </thead>        
+            <tbody>
+                @foreach (var film in Model.Filmer)
                 {
-                    <form method="post" asp-page-handler="Return">
-                        <input type="hidden" name="FilmId" value="@film.FilmId" />
-                        <button type="submit" class="btn btn-primary">Återlämna</button>
-                    </form>
+                    <tr>
+                        <td>@film.Title</td>
+                        <td>@film.Description</td>
+                        <td>@string.Join(", ", film.Genres)</td>
+                        <td>@film.ActorSummary</td>
+                        <td>
+                            @(Model.IsAvailable(film.FilmId) ? "Ja" : "Nej")
+                        </td>
+                        <td>
+                            @if (Model.IsAvailable(film.FilmId))
+                            {
+                                <form method="post" asp-page-handler="Rent">
+                                    <input type="hidden" name="FilmId" value="@film.FilmId" />
+                                    <select name="SelectedCustomerId" class="form-control" required>
+                                        <option value="">Välj kund</option>
+                                            @foreach (var customer in Model.Customers)
+                                            {
+                                                    <option value="@customer.CustomerId">@customer.Name</option>
+                                            }
+                                    </select>
+                                    <select name="SelectedStaffId" class="form-control" required>
+                                        <option value="">Välj personal</option>
+                                            @foreach (var staff in Model.StaffMembers)
+                                            {
+                                                    <option value="@staff.StaffId">@staff.Name</option>
+                                            }
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">Hyra</button>
+                                </form>
+                            }
+                            </td>
+                        <td>
+                        @if (!Model.IsAvailable(film.FilmId))
+                        {
+                            <form method="post" asp-page-handler="Return">
+                                <input type="hidden" name="FilmId" value="@film.FilmId" />
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Återlämna</button>
+                            </form>
+                        }
+                        </td>
+                    </tr>
                 }
-            </td>
-            </tr>
-            }
-        </tbody>
-
-
-    </table>
+            </tbody>
+        </table>    
+    </div>
 }
 else
 {

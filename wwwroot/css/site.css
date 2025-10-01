@@ -177,11 +177,12 @@ p {
     color: #831f00;
     border-color: #831f00;
 }
-    .btn-sm.btn-outline-danger:hover, btn-outline-danger:focus {
+.btn-sm.btn-outline-danger:hover, btn-outline-danger:focus {
         color: white;
         border-color: #831f00;
         background-color: #831f00;        
     }
+
 .btn-warning {
     background-color: #ffd994;
     font-size: 2rem;
@@ -221,7 +222,6 @@ btn-danger {
     padding: .75rem;
     background: #fff;
 }
-
 .actor-grid {
     display: grid;
     /* Använder minmax för att säkerställa att kolumnerna alltid är minst 200px breda, men expanderar till 1fr */
@@ -229,15 +229,13 @@ btn-danger {
     gap: .5rem .75rem;
     width: 100%;
 }
-
-    .actor-grid .form-check {
+.actor-grid .form-check {
         /* NYTT: Förhindra att texten inuti bryts över flera rader */
         white-space: nowrap;
         /* NYTT: Lägg till overflow och text-overflow för att hantera superlånga namn */
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
 
 .page {
     background-color: #faf8f1;

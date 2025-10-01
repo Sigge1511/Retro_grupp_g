@@ -4,7 +4,7 @@
     ViewData["Title"] = "Topplistor";
 }
 
-<h2>Mest uthyrda filmer</h2>
+<h1>Våra mest uthyrda filmer</h1>
 <div class="dashboard-grid">
 @foreach (var category in Model.StaticTopLists)
 {
@@ -27,7 +27,7 @@
 <form method="get" action="#selected-category">
     <label for="category">Välj kategori:</label>
     <select asp-for="SelectedCategoryId" asp-items="Model.OtherCategories"></select>
-    <button type="submit">Visa</button>
+    <button type="submit" class="btn btn-primary" style="font-size: 1.2rem;">Visa</button>
 </form>
 
 @if (Model.SelectedCategoryTopList != null)

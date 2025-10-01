@@ -5,7 +5,7 @@
     var customers = (List<(int CustomerId, string FullName, string Email)>)ViewData["Customers"];
 }
 
-<h2>Returnera film</h2>
+<h1>Returnera film</h1>
 @if (TempData["Msg"] is string msg)
 {
     <div id="serverMsg" class="alert alert-info">@msg</div>
