@@ -37,22 +37,20 @@ namespace Retro_grupp_g.Pages.Addresses
         public async Task<IActionResult> OnPostAsync()
         {
             ModelState.Remove("Address.City");
+            ModelState.Remove("Address.Customers");
 
-            ModelState.Remove("Address.Address2");
-            ModelState.Remove("Address.PostalCode");
+            if (Address.CityId < 1)
+                ModelState.AddModelError("Address.CityId", "Välj en stad.");
+
+            if (string.IsNullOrWhiteSpace(Address.Address1))
+                ModelState.AddModelError("Address.Address1", "Adress är obligatoriskt.");
+            if (string.IsNullOrWhiteSpace(Address.District))
+                ModelState.AddModelError("Address.District", "Stadsdel är obligatoriskt.");
+            if (string.IsNullOrWhiteSpace(Address.Phone))
+                ModelState.AddModelError("Address.Phone", "Telefonnummer är obligatoriskt.");
 
             if (!ModelState.IsValid)
             {
-                await LoadDropdownsAsync();
-                return Page();
-            }
-
-            if (string.IsNullOrWhiteSpace(Address.Address1) ||
-                string.IsNullOrWhiteSpace(Address.District) ||
-                Address.CityId == 0 ||
-                string.IsNullOrWhiteSpace(Address.Phone))
-            {
-                ModelState.AddModelError(string.Empty, "Fyll i alla obligatoriska fält.");
                 await LoadDropdownsAsync();
                 return Page();
             }
@@ -63,7 +61,6 @@ namespace Retro_grupp_g.Pages.Addresses
                 Address.PostalCode,
                 Address.District
             );
-
             if (exists)
             {
                 ModelState.AddModelError(string.Empty, "Adressen finns redan.");
@@ -73,15 +70,34 @@ namespace Retro_grupp_g.Pages.Addresses
 
             Address.LastUpdate = DateTime.UtcNow;
 
-            await _repo.AddAsync(Address);
-            await _repo.SaveAsync();
+            try
+            {
+                await _repo.AddAsync(Address);
+                await _repo.SaveAsync();
 
-            return RedirectToPage("/Customers/Create");
+                const string flag = "address_created";
+
+                if (!string.IsNullOrWhiteSpace(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                {
+                    var sep = ReturnUrl.Contains('?') ? "&" : "?";
+                    return LocalRedirect($"{ReturnUrl}{sep}flash={flag}");
+                }
+
+                return RedirectToPage("/Addresses/Index", new { flash = flag });
+
+            }
+            catch (DbUpdateException ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Databasfel: {ex.GetBaseException().Message}");
+                await LoadDropdownsAsync();
+                return Page();
+            }
         }
 
         private async Task LoadDropdownsAsync()
         {
             Cities = await _db.Cities
+                .AsNoTracking()
                 .OrderBy(c => c.City1)
                 .Select(c => new SelectListItem
                 {
