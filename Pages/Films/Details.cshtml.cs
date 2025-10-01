@@ -7,16 +7,17 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Retro_grupp_g.Data;
 using Retro_grupp_g.Models;
+using Retro_grupp_g.Repositories;
 
 namespace Retro_grupp_g.Pages.Films
 {
     public class DetailsModel : PageModel
     {
-        private readonly Retro_grupp_g.Data.SakilaDbContext _context;
+        private readonly IFilmRepository _filmRepository;
 
-        public DetailsModel(Retro_grupp_g.Data.SakilaDbContext context)
+        public DetailsModel(IFilmRepository filmRepository)
         {
-            _context = context;
+            _filmRepository = filmRepository;
         }
 
         public Film Film { get; set; } = default!;
@@ -28,7 +29,7 @@ namespace Retro_grupp_g.Pages.Films
                 return NotFound();
             }
 
-            var film = await _context.Films.FirstOrDefaultAsync(m => m.FilmId == id);
+            var film = await _filmRepository.GetByIdAsync(id.Value);
             if (film == null)
             {
                 return NotFound();
