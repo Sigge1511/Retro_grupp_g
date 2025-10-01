@@ -2,16 +2,18 @@
 @model Retro_grupp_g.Pages.LoginModel
 @{
     <h2>Logga in</h2>
-
+    <br>
     <form method="post">
     <div>
-        <label>Personal:</label>
-        <select asp-for="SelectedStaffId" asp-items="Model.StaffList"></select>
+        <label class="form-label">Personal:</label>
+            <select asp-for="SelectedStaffId" asp-items="Model.StaffList" class="form-control" style="width: 15%;"></select>
     </div>
+        <br>
     <div>
-        <label>Butik:</label>
-        <select asp-for="SelectedStoreId" asp-items="Model.StoreList"></select>
+        <label class="form-label">Butik:</label>
+            <select asp-for="SelectedStoreId" asp-items="Model.StoreList" class="form-control" style="width: 15%;"></select>
     </div>
-    <button type="submit">Logga in</button>
+        <br>
+    <button type="submit" class="btn-primary">Logga in</button>
     </form>
 }

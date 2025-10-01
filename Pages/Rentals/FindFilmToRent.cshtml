@@ -5,21 +5,21 @@
 
 }
 <h1>Hitta film!</h1>
-
 <form method="post">
-	<input asp-for="SearchTerm" placeholder="Sök på titel, skådespelare, regissör, genre" />
-	<button type="submit">Sök</button>
+	<input asp-for="SearchTerm" class=" form-control" style="width: 30%;" placeholder="Sök på titel, skådespelare, regissör, genre" />
+	<br><button type="submit" class="btn-primary">Sök</button>
 </form>
-
-<table>
+<br>
+<br>
+<table class="table">
 	<thead>
 		<tr>
-			<th>Title</th>
+			<th>Titel</th>
 			<th>Genre</th>
 			<th>Språk</th>
 			<th>Skådespelare</th>
 			<th>Tillgänglig</th>
-			<th>Åtgärder</th>
+			<th>Hyr denna film</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -32,18 +32,10 @@
 				<td>@film.Language</td>
 				<td>@film.ActorSummary</td>
 				<td>@(isAvailable ? "Tillgänglig" : "Uthyrd")</td>
-				<td>
-					@if (isAvailable)
-					{
-						<a asp-asp-page="./Rent" asp-route-filmiId="@film.FilmId>Hyr ut<"></a>
-
-					}
-					else
-					{
-						<span>Ej tillgänglig</span>
-					}
-				</td>
+				<td><a asp-page="./Rentals/CreateRental" class="btn btn-sm btn-outline-primary" asp-route-filmId="@film.FilmId">Hyr ut</a></td>
 			</tr>
 		}
 	</tbody>
 </table>
+
+@* <a asp-page="./Edit" asp-route-id="@item.FilmId" class="small-link">Redigera</a>  *@
